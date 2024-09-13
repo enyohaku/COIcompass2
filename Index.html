@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>COI Compass</title>
+    <style>
+      body { font-family: Arial, sans-serif; text-align: center; }
+      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+      .logo { max-width: 100%; height: auto; margin-bottom: 20px; }
+      .description { margin-bottom: 30px; }
+      .country-selection { display: flex; flex-wrap: wrap; justify-content: center; }
+      .country-btn { margin: 10px; cursor: pointer; }
+      .country-btn img { width: 60px; height: 60px; border-radius: 50%; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID" alt="COI Compass Logo" class="logo">
+      <div class="description">
+        <p>難民の認定に不可欠なCOI（出身国情報）を生成AIを駆使して収集、要約したサイトです。日本で公正公平な難民受け入れの実現に向けて弁護士や支援団体の皆様をサポートするサイトを目指します。</p>
+      </div>
+      <h2>調べたい国を選んでください</h2>
+      <div class="country-selection" id="countrySelection">
+        <!-- 国旗ボタンはJavaScriptで動的に生成されます -->
+      </div>
+    </div>
+    <script>
+      // 国のリストと対応する国旗画像URL
+      const countries = [
+        {name: 'Uganda', flag: 'https://flagcdn.com/w80/ug.png'},
+        {name: 'Sri Lanka', flag: 'https://flagcdn.com/w80/lk.png'},
+        {name: 'Nigeria', flag: 'https://flagcdn.com/w80/ng.png'}
+      ];
+      
+      function loadCountries() {
+        const container = document.getElementById('countrySelection');
+        countries.forEach(country => {
+          const button = document.createElement('div');
+          button.className = 'country-btn';
+          button.innerHTML = `<img src="${country.flag}" alt="${country.name}" title="${country.name}">`;
+          button.onclick = () => selectCountry(country.name);
+          container.appendChild(button);
+        });
+      }
+      
+      function selectCountry(countryName) {
+        google.script.run.withSuccessHandler(onCountrySelected).selectCountry(countryName);
+      }
+      
+      function onCountrySelected(result) {
+        // 国選択後の処理をここに実装します（次のステップで実装）
+        console.log(result);
+      }
+      
+      window.onload = loadCountries;
+    </script>
+  </body>
+</html>
