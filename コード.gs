@@ -122,3 +122,22 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
   scriptProperties.setProperty('DIFY_AGENT_API_KEY', apiKey);
   console.log('Dify API設定が更新されました。');
 }
+function getCOIConceptContent() {
+  // COIの考え方が記載されているGoogle Driveファイルのファイル名または一部
+  const fileName = "COIの考え方"; // これは実際のファイル名に合わせて変更してください
+  
+  var files = DriveApp.getFilesByName(fileName);
+  if (files.hasNext()) {
+    var file = files.next();
+    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
+      var doc = DocumentApp.openById(file.getId());
+      return doc.getBody().getText();
+    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
+      return file.getBlob().getDataAsString();
+    } else {
+      return "ファイルの形式がサポートされていません。";
+    }
+  } else {
+    return "COIの考え方に関するファイルが見つかりませんでした。";
+  }
+}
