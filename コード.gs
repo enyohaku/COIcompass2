@@ -1,4 +1,3 @@
-
 const scriptProperties = PropertiesService.getScriptProperties();
 const DIFY_API_BASE_URL = scriptProperties.getProperty('DIFY_API_BASE_URL');
 const DIFY_AGENT_API_KEY = scriptProperties.getProperty('DIFY_AGENT_API_KEY');
@@ -49,7 +48,7 @@ function processUserMessage(country, message, conversationId, userId) {
   console.log('Processing user message:', { country, message, conversationId, userId });
   var difyResponse = queryDify(message, conversationId, userId);
   var driveResults = searchGoogleDrive(message);
-  
+
   console.log('Processed user message, Dify response:', difyResponse);
   return {
     userMessage: message,
@@ -61,7 +60,7 @@ function processUserMessage(country, message, conversationId, userId) {
 function queryDify(userMessage, conversationId, userId) {
   console.log('DIFY_API_BASE_URL:', DIFY_API_BASE_URL);
   console.log('DIFY_AGENT_API_KEY:', DIFY_AGENT_API_KEY);
-  
+
   var apiUrl = DIFY_API_BASE_URL + '/chat-messages';
   console.log('Using Dify API URL:', apiUrl);
 
@@ -85,7 +84,7 @@ function queryDify(userMessage, conversationId, userId) {
     console.log('Dify API response status:', response.getResponseCode());
     console.log('Dify API response headers:', JSON.stringify(response.getAllHeaders()));
     console.log('Dify API response content:', response.getContentText());
-    
+
     return JSON.parse(response.getContentText());
   } catch (e) {
     console.error('Error in Dify API request:', e.toString());
@@ -125,7 +124,7 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
 function getCOIConceptContent() {
   // COIの考え方が記載されているGoogle Driveファイルのファイル名または一部
   const fileName = "COIの考え方"; // これは実際のファイル名に合わせて変更してください
-  
+
   var files = DriveApp.getFilesByName(fileName);
   if (files.hasNext()) {
     var file = files.next();

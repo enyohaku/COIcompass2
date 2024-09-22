@@ -216,41 +216,41 @@
           padding-top: 50px;
           /* 小さな画面ではパディングを調整 */
         }
+
         .home-icon {
-        font-size: 36px;
-        padding: 5px 10px;
+          font-size: 36px;
+          padding: 5px 10px;
         }
       }
 
-        header {
-          height: 120px;
-        }
+      header {
+        height: 120px;
+      }
 
-        #chat-container {
-          height: calc(100vh - 230px);
-          /* 小さな画面では高さを調整 */
-          padding-top: 10px;
-        }
-      
+      #chat-container {
+        height: calc(100vh - 230px);
+        /* 小さな画面では高さを調整 */
+        padding-top: 10px;
+      }
     </style>
   </head>
 
 <body>
   <header>
-     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo"
+    <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo"
       class="logo">
-      <!-- <button id="home-button" class="home-icon" aria-label="ホームに戻る">🏠</button> -->
-      <button class="hamburger" onclick="toggleDriveResults()">☰</button>
+    <!-- <button id="home-button" class="home-icon" aria-label="ホームに戻る">🏠</button> -->
+    <button class="hamburger" onclick="toggleDriveResults()">☰</button>
   </header>
 
   <div id="chat-container">
     <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
-   <div id="country-selection">
-  <button onclick="handleCountrySelection('Uganda')">Uganda</button>
-  <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
-  <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
-  <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
-</div>
+    <div id="country-selection">
+      <button onclick="handleCountrySelection('Uganda')">Uganda</button>
+      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
+      <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
+      <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
+    </div>
   </div>
 
   <div id="input-area">
@@ -260,21 +260,25 @@
 
   <div id="drive-results"></div>
 
-<script>
-  var selectedCountry = '';
-  let coiConceptDisplayed = false;
+  <script>
+    var selectedCountry = '';
+let coiConceptDisplayed = false;
 
 function handleCountrySelection(country) {
   selectedCountry = country;
+  hideWelcomeAndButtons();
+  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+}
+
+function hideWelcomeAndButtons() {
   document.getElementById('country-selection').style.display = 'none';
   document.getElementById('welcome-message').style.display = 'none';
   document.getElementById('input-area').style.display = 'flex';
   document.getElementById('chat-container').style.paddingBottom = '100px';
-  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
 }
 
 function openCOIConcept() {
-  if (coiConceptDisplayed) return; // 既に表示されている場合は何もしない
+  if (coiConceptDisplayed) return;
 
   var button = document.getElementById('coi-concept-button');
   button.disabled = true;
@@ -282,7 +286,8 @@ function openCOIConcept() {
 
   google.script.run
     .withSuccessHandler(function(content) {
-      addMessageToChat('bot', content);
+      hideWelcomeAndButtons();
+      addMessageToChat('bot', content, true, false); // スクロールしないようにfalseを追加
       coiConceptDisplayed = true;
       resetCOIConceptButton();
     })
@@ -294,52 +299,85 @@ function openCOIConcept() {
     .getCOIConceptContent();
 }
 
+function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
+  var chatContainer = document.getElementById('chat-container');
+  var messageElement = document.createElement('div');
+  messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+  
+  var paragraphs = message.split('\n');
+  paragraphs.forEach(function(paragraph) {
+    var p = document.createElement('p');
+    p.textContent = paragraph;
+    messageElement.appendChild(p);
+  });
+
+  chatContainer.appendChild(messageElement);
+  
+  if (appendButtons) {
+    appendButtonsAfterContent(messageElement);
+  }
+
+  if (shouldScroll) {
+    setTimeout(() => {
+      messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+  }
+}
+
+function appendButtonsAfterContent(messageElement) {
+  var buttonsContainer = document.createElement('div');
+  buttonsContainer.id = 'country-selection';
+  buttonsContainer.style.display = 'flex';
+  buttonsContainer.style.flexDirection = 'column';
+  buttonsContainer.style.gap = '20px';
+  buttonsContainer.style.width = '50%';
+  buttonsContainer.style.margin = '20px auto 0';
+
+  var countries = ['Uganda', 'Sri Lanka', 'Nigeria'];
+  countries.forEach(function(country) {
+    var button = document.createElement('button');
+    button.textContent = country;
+    button.onclick = function() { handleCountrySelection(country); };
+    buttonsContainer.appendChild(button);
+  });
+
+  var coiButton = document.createElement('button');
+  coiButton.textContent = 'COIの考え方';
+  coiButton.id = 'coi-concept-button';
+  coiButton.onclick = openCOIConcept;
+  buttonsContainer.appendChild(coiButton);
+
+  messageElement.appendChild(buttonsContainer);
+}
+
 function resetCOIConceptButton() {
   var button = document.getElementById('coi-concept-button');
   button.disabled = false;
   button.textContent = 'COIの考え方';
 }
 
-// COIの考え方ボタンのイベントリスナーを更新
-document.getElementById('coi-concept-button').addEventListener('click', function() {
-  if (this.disabled || coiConceptDisplayed) return; // ボタンが無効化されているか、既に表示されている場合は何もしない
-  openCOIConcept();
+function sendMessage() {
+  var userInput = document.getElementById('user-input');
+  var message = userInput.value;
+  if (message.trim() === '') return;
+  addMessageToChat('user', message);
+  userInput.value = '';
+  google.script.run.withSuccessHandler(handleResponse).handleUserInput(selectedCountry, message);
+}
+
+function handleResponse(result) {
+  addMessageToChat('bot', result.difyResponse);
+  displayDriveResults(result.driveResults);
+}
+
+document.getElementById('user-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
-  function addMessageToChat(sender, message) {
-    var chatContainer = document.getElementById('chat-container');
-    var messageElement = document.createElement('div');
-    messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-    
-    var paragraphs = message.split('\n');
-    paragraphs.forEach(function(paragraph) {
-      var p = document.createElement('p');
-      p.textContent = paragraph;
-      messageElement.appendChild(p);
-    });
-
-    chatContainer.appendChild(messageElement);
-    
-    // スムーズなスクロールを実装
-    setTimeout(() => {
-      messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
-
-  function sendMessage() {
-    var userInput = document.getElementById('user-input');
-    var message = userInput.value;
-    if (message.trim() === '') return;
-    addMessageToChat('user', message);
-    userInput.value = '';
-    google.script.run.withSuccessHandler(handleResponse).handleUserInput(selectedCountry, message);
-  }
-
-  function handleResponse(result) {
-    addMessageToChat('bot', result.difyResponse);
-    displayDriveResults(result.driveResults);
-  }
-
+// 他の既存の関数（displayDriveResults, toggleDriveResults など）はそのままで大丈夫です
   function displayDriveResults(results) {
     var container = document.getElementById('drive-results');
     container.innerHTML = '<h3>関連する文書:</h3>';
@@ -380,8 +418,6 @@ function goHome() {
   `;
 }
   
-
-
   document.getElementById('user-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -394,6 +430,6 @@ function goHome() {
     if (this.disabled || coiConceptDisplayed) return; // ボタンが無効化されているか、既に表示されている場合は何もしない
     openCOIConcept();
   });
-</script>
+  </script>
 </body>
 </html>
