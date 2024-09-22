@@ -1,5 +1,4 @@
-// Code.gs
-// スクリプトプロパティから設定を取得
+
 const scriptProperties = PropertiesService.getScriptProperties();
 const DIFY_API_BASE_URL = scriptProperties.getProperty('DIFY_API_BASE_URL');
 const DIFY_AGENT_API_KEY = scriptProperties.getProperty('DIFY_AGENT_API_KEY');
