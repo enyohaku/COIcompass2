@@ -2,6 +2,7 @@ const scriptProperties = PropertiesService.getScriptProperties();
 const DIFY_API_BASE_URL = scriptProperties.getProperty('DIFY_API_BASE_URL');
 const DIFY_AGENT_API_KEY = scriptProperties.getProperty('DIFY_AGENT_API_KEY');
 
+
 function doGet() {
   console.log('doGet function called');
   return HtmlService.createHtmlOutputFromFile('Index')
@@ -140,3 +141,36 @@ function getCOIConceptContent() {
     return "COIの考え方に関するファイルが見つかりませんでした。";
   }
 }
+
+function handleUserInput(country, message) {
+  console.log('Handling user input:', { country, message });
+  if (message.includes('/')) {
+    return handleTopicOption(message);
+  }
+  return processUserMessage(country, message);
+}
+
+function handleTopicOption(option) {
+  console.log('Handling topic option:', option);
+  var result = openGoogleDriveFolder(option);
+  return result;
+}
+
+function openGoogleDriveFolder(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    var folder = folders.next();
+    var folderUrl = folder.getUrl();
+    return {
+      success: true,
+      url: folderUrl,
+      message: `${folderName}フォルダを開きました。`
+    };
+  } else {
+    return {
+      success: false,
+      message: `${folderName}フォルダが見つかりませんでした。`
+    };
+  }
+}
+

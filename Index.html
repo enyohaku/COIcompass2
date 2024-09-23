@@ -430,6 +430,53 @@ function goHome() {
     if (this.disabled || coiConceptDisplayed) return; // ボタンが無効化されているか、既に表示されている場合は何もしない
     openCOIConcept();
   });
+
+      const topics = {
+      'Uganda': ['政治的発言', 'ジェンダー']
+    };
+
+    function handleCountrySelection(country) {
+      selectedCountry = country;
+      hideWelcomeAndButtons();
+      addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+      showTopicOptions(country);
+    }
+
+    function showTopicOptions(country) {
+      const optionsContainer = document.createElement('div');
+      optionsContainer.id = 'topic-options';
+      
+      topics[country].forEach(topic => {
+        const button = document.createElement('button');
+        button.textContent = `${country}/${topic}`;
+        button.onclick = () => handleTopicSelection(country, topic);
+        optionsContainer.appendChild(button);
+      });
+      
+      document.getElementById('chat-container').appendChild(optionsContainer);
+    }
+
+    function handleTopicSelection(country, topic) {
+      addMessageToChat('user', `${country}/${topic}`);
+      google.script.run
+        .withSuccessHandler(handleTopicResponse)
+        .withFailureHandler(handleError)
+        .handleUserInput(country, `${country}/${topic}`);
+    }
+
+    function handleTopicResponse(result) {
+      if (result.success) {
+        addMessageToChat('bot', result.message);
+        window.open(result.url, '_blank');
+      } else {
+        addMessageToChat('bot', result.message);
+      }
+    }
+
+    function handleError(error) {
+      console.error('Error:', error);
+      addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
+    }
   </script>
 </body>
 </html>
