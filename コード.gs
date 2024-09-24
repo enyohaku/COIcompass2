@@ -2,7 +2,6 @@ const scriptProperties = PropertiesService.getScriptProperties();
 const DIFY_API_BASE_URL = scriptProperties.getProperty('DIFY_API_BASE_URL');
 const DIFY_AGENT_API_KEY = scriptProperties.getProperty('DIFY_AGENT_API_KEY');
 
-
 function doGet() {
   console.log('doGet function called');
   return HtmlService.createHtmlOutputFromFile('Index')
@@ -101,14 +100,12 @@ function queryDify(userMessage, conversationId, userId) {
   }
 }
 
-// ... 既存のコードはそのままで ...
-
-function handleUserInput(country, message) {
-  console.log('Handling user input:', { country, message });
+function handleUserInput(country, message, conversationId, userId) {
+  console.log('Handling user input:', { country, message, conversationId, userId });
   if (message.includes('/')) {
     return handleTopicDocument(message);
   }
-  return processUserMessage(country, message);
+  return processUserMessage(country, message, conversationId, userId);
 }
 
 function handleTopicDocument(topic) {
@@ -150,14 +147,13 @@ function getTopicDocumentContent(topic) {
   }
 }
 
-// テスト用関数
 function testAgentConversation() {
   console.log('Testing agent conversation');
   var response = queryDify("自己紹介して", null, "test_user");
   console.log('Test response:', JSON.stringify(response, null, 2));
   return response;
 }
-// スクリプトプロパティを設定するための関数
+
 function setDifyApiConfig(apiBaseUrl, apiKey) {
   console.log('Setting Dify API config');
   const scriptProperties = PropertiesService.getScriptProperties();
@@ -165,10 +161,9 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
   scriptProperties.setProperty('DIFY_AGENT_API_KEY', apiKey);
   console.log('Dify API設定が更新されました。');
 }
-function getCOIConceptContent() {
-  // COIの考え方が記載されているGoogle Driveファイルのファイル名または一部
-  const fileName = "COIの考え方"; // これは実際のファイル名に合わせて変更してください
 
+function getCOIConceptContent() {
+  const fileName = "COIの考え方";
   var files = DriveApp.getFilesByName(fileName);
   if (files.hasNext()) {
     var file = files.next();
@@ -185,52 +180,21 @@ function getCOIConceptContent() {
   }
 }
 
-// ... 既存の関数はそのままで ...
-
-function handleUserInput(country, message) {
-  console.log('Handling user input:', { country, message });
-  if (message.includes('/')) {
-    return handleTopicDocument(message);
-  }
-  return processUserMessage(country, message);
-}
-
-function handleTopicDocument(topic) {
-  console.log('Handling topic document:', topic);
-  var result = getTopicDocumentContent(topic);
-  return result;
-}
-
-function getTopicDocumentContent(topic) {
-  var fileName = topic.replace('/', ' - '); // 例: "Uganda/政治的発言" を "Uganda - 政治的発言" に変換
-  var files = DriveApp.getFilesByName(fileName);
-  if (files.hasNext()) {
-    var file = files.next();
-    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
-      var doc = DocumentApp.openById(file.getId());
-      return {
-        success: true,
-        content: doc.getBody().getText(),
-        message: `${fileName}の内容を取得しました。`
-      };
-    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
-      return {
-        success: true,
-        content: file.getBlob().getDataAsString(),
-        message: `${fileName}の内容を取得しました。`
-      };
-    } else {
-      return {
-        success: false,
-        message: "ファイルの形式がサポートされていません。"
-      };
-    }
+// 以下は元のコードにあった追加の関数です
+function openGoogleDriveFolder(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    var folder = folders.next();
+    var folderUrl = folder.getUrl();
+    return {
+      success: true,
+      url: folderUrl,
+      message: `${folderName}フォルダを開きました。`
+    };
   } else {
     return {
       success: false,
-      message: `${fileName}が見つかりませんでした。`
+      message: `${folderName}フォルダが見つかりませんでした。`
     };
   }
 }
-
-// ... その他の関数 ...
