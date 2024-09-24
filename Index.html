@@ -52,6 +52,23 @@
       padding: 10px 15px;
     }
 
+     .home-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+  }
+
+  .home-icon svg {
+    width: 54px;
+    height: 54px;
+    stroke: #000000; /* アイコンの色 */
+  }
+
+  .home-icon:hover svg {
+    opacity: 0.7;
+  }
+
     #chat-container {
       height: calc(100vh - 300px);
       overflow-y: auto;
@@ -207,6 +224,7 @@
         padding-top: 10px;
       }
     }
+
   </style>
 </head>
 
@@ -215,7 +233,11 @@
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo"
       class="logo">
     <button class="hamburger" onclick="toggleDriveResults()">☰</button>
-    <button id="home-button" onclick="goHome()">ホームに戻る</button>
+    <button id="home-button" class="home-icon" onclick="goHome()" aria-label="ホームに戻る">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+  </svg>
   </header>
 
   <div id="chat-container">
@@ -375,23 +397,49 @@
       driveResults.style.display = driveResults.style.display === 'none' ? 'block' : 'none';
     }
 
-function goHome() {
-  selectedCountry = '';
-  coiConceptDisplayed = false;
-  document.getElementById('country-selection').style.display = 'flex';
-  document.getElementById('welcome-message').style.display = 'block';
-  document.getElementById('input-area').style.display = 'none';
-  document.getElementById('chat-container').innerHTML = `
-    <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
-    <div id="country-selection">
-      <button onclick="handleCountrySelection('Uganda')">Uganda</button>
-      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
-      <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
-      <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
-    </div>
-  `;
-}
-    function showTopicOptions(country) {
+ function goHome() {
+    selectedCountry = '';
+    coiConceptDisplayed = false;
+    document.getElementById('country-selection').style.display = 'flex';
+    document.getElementById('welcome-message').style.display = 'block';
+    document.getElementById('input-area').style.display = 'none';
+    document.getElementById('chat-container').innerHTML = `
+      <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
+      <div id="country-selection">
+        <button onclick="handleCountrySelection('Uganda')">Uganda</button>
+        <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
+        <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
+        <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
+      </div>
+    `;
+
+    // オプション：ユーザーにフィードバックを提供
+    console.log("ホーム画面に戻りました");
+    // あるいは、画面上に通知を表示する場合:
+    // showNotification("ホーム画面に戻りました");
+  }
+
+  // オプション：通知を表示する関数
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.backgroundColor = '#4CAF50';
+    notification.style.color = 'white';
+    notification.style.padding = '10px';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '1000';
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 3000);
+  }
+  
+      function showTopicOptions(country) {
       const optionsContainer = document.createElement('div');
       optionsContainer.id = 'topic-options';
       
@@ -438,6 +486,8 @@ function goHome() {
       if (this.disabled || coiConceptDisplayed) return;
       openCOIConcept();
     });
+
+    
 </script>
 
 </body>
