@@ -485,27 +485,28 @@ function goHome() {
       document.getElementById('chat-container').appendChild(optionsContainer);
     }
 
-    function handleTopicSelection(country, topic) {
-      addMessageToChat('user', `${country}/${topic}`);
-      google.script.run
-        .withSuccessHandler(handleTopicResponse)
-        .withFailureHandler(handleError)
-        .handleUserInput(country, `${country}/${topic}`);
-    }
+function handleTopicSelection(country, topic) {
+  addMessageToChat('user', `${country}/${topic}`);
+  google.script.run
+    .withSuccessHandler(handleTopicResponse)
+    .withFailureHandler(handleError)
+    .handleUserInput(country, `${country}/${topic}`);
+}
 
-    function handleTopicResponse(result) {
-      if (result.success) {
-        addMessageToChat('bot', result.message);
-        window.open(result.url, '_blank');
-      } else {
-        addMessageToChat('bot', result.message);
-      }
-    }
+function handleTopicResponse(result) {
+  if (result.success) {
+    addMessageToChat('bot', result.message);
+    addMessageToChat('bot', result.content);
+  } else {
+    addMessageToChat('bot', result.message);
+  }
+}
 
-    function handleError(error) {
-      console.error('Error:', error);
-      addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
-    }
+function handleError(error) {
+  console.error('Error:', error);
+  addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
+}
+
   </script>
 </body>
 </html>

@@ -142,35 +142,52 @@ function getCOIConceptContent() {
   }
 }
 
+// ... 既存の関数はそのままで ...
+
 function handleUserInput(country, message) {
   console.log('Handling user input:', { country, message });
   if (message.includes('/')) {
-    return handleTopicOption(message);
+    return handleTopicDocument(message);
   }
   return processUserMessage(country, message);
 }
 
-function handleTopicOption(option) {
-  console.log('Handling topic option:', option);
-  var result = openGoogleDriveFolder(option);
+function handleTopicDocument(topic) {
+  console.log('Handling topic document:', topic);
+  var result = getTopicDocumentContent(topic);
   return result;
 }
 
-function openGoogleDriveFolder(folderName) {
-  var folders = DriveApp.getFoldersByName(folderName);
-  if (folders.hasNext()) {
-    var folder = folders.next();
-    var folderUrl = folder.getUrl();
-    return {
-      success: true,
-      url: folderUrl,
-      message: `${folderName}フォルダを開きました。`
-    };
+function getTopicDocumentContent(topic) {
+  var fileName = topic.replace('/', ' - '); // 例: "Uganda/政治的発言" を "Uganda - 政治的発言" に変換
+  var files = DriveApp.getFilesByName(fileName);
+  if (files.hasNext()) {
+    var file = files.next();
+    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
+      var doc = DocumentApp.openById(file.getId());
+      return {
+        success: true,
+        content: doc.getBody().getText(),
+        message: `${fileName}の内容を取得しました。`
+      };
+    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
+      return {
+        success: true,
+        content: file.getBlob().getDataAsString(),
+        message: `${fileName}の内容を取得しました。`
+      };
+    } else {
+      return {
+        success: false,
+        message: "ファイルの形式がサポートされていません。"
+      };
+    }
   } else {
     return {
       success: false,
-      message: `${folderName}フォルダが見つかりませんでした。`
+      message: `${fileName}が見つかりませんでした。`
     };
   }
 }
 
+// ... その他の関数 ...
