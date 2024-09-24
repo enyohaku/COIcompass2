@@ -215,6 +215,7 @@
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo"
       class="logo">
     <button class="hamburger" onclick="toggleDriveResults()">☰</button>
+    <button id="home-button" onclick="goHome()">ホームに戻る</button>
   </header>
 
   <div id="chat-container">
@@ -374,23 +375,22 @@
       driveResults.style.display = driveResults.style.display === 'none' ? 'block' : 'none';
     }
 
-    function goHome() {
-      selectedCountry = '';
-      coiConceptDisplayed = false;
-      document.getElementById('country-selection').style.display = 'flex';
-      document.getElementById('welcome-message').style.display = 'block';
-      document.getElementById('input-area').style.display = 'none';
-      document.getElementById('chat-container').innerHTML = `
-        <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
-        <div id="country-selection">
-          <button onclick="handleCountrySelection('Uganda')">Uganda</button>
-          <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
-          <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
-          <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
-        </div>
-      `;
-    }
-
+function goHome() {
+  selectedCountry = '';
+  coiConceptDisplayed = false;
+  document.getElementById('country-selection').style.display = 'flex';
+  document.getElementById('welcome-message').style.display = 'block';
+  document.getElementById('input-area').style.display = 'none';
+  document.getElementById('chat-container').innerHTML = `
+    <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
+    <div id="country-selection">
+      <button onclick="handleCountrySelection('Uganda')">Uganda</button>
+      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
+      <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
+      <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
+    </div>
+  `;
+}
     function showTopicOptions(country) {
       const optionsContainer = document.createElement('div');
       optionsContainer.id = 'topic-options';
