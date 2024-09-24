@@ -169,12 +169,14 @@ function getCOIConceptContent() {
   while (files.hasNext()) {
     var file = files.next();
     if (file.getMimeType() === MimeType.PDF) {
+      var pdfContent = extractTextFromPDF(file);
       return {
         success: true,
         type: 'pdf',
         url: file.getDownloadUrl(),
         webViewLink: file.getUrl(),
-        name: file.getName()
+        name: file.getName(),
+        content: pdfContent
       };
     }
   }
@@ -183,6 +185,26 @@ function getCOIConceptContent() {
     success: false,
     message: "COIの考え方のPDFファイルが見つかりませんでした。"
   };
+}
+
+function extractTextFromPDF(file) {
+  var blob = file.getBlob();
+  var resource = {
+    title: file.getName(),
+    mimeType: MimeType.PDF
+  };
+  
+  // PDFファイルをGoogle Docsに変換
+  var doc = Drive.Files.insert(resource, blob, {ocr: true, ocrLanguage: 'ja'});
+  
+  // 変換されたドキュメントを開く
+  var docFile = DocumentApp.openById(doc.id);
+  var text = docFile.getBody().getText();
+  
+  // 一時的に作成したGoogle Docsファイルを削除
+  Drive.Files.remove(doc.id);
+  
+  return text;
 }
 
 // 以下は元のコードにあった追加の関数です

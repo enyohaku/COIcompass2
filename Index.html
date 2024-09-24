@@ -338,6 +338,47 @@
   border: 1px solid #ccc;
 }
 
+.viewer-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.view-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.view-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+}
+
+.view-button:hover {
+  background-color: #45a049;
+}
+
+.view-content {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.text-content {
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 </style>
 </head>
 
@@ -418,7 +459,7 @@ function openCOIConcept() {
     .withSuccessHandler(function(result) {
       hideWelcomeAndButtons();
       if (result.success) {
-        displayPDFViewer(result.url, result.webViewLink, result.name);
+        displayPDFAndTextViewer(result.url, result.webViewLink, result.name, result.content);
       } else {
         addMessageToChat('bot', result.message);
       }
@@ -433,22 +474,31 @@ function openCOIConcept() {
     .getCOIConceptContent();
 }
 
-  function displayPDFViewer(downloadUrl, webViewLink, fileName) {
+function displayPDFAndTextViewer(downloadUrl, webViewLink, fileName, content) {
   var chatContainer = document.getElementById('chat-container');
-  var pdfContainer = document.createElement('div');
-  pdfContainer.className = 'pdf-container';
-  pdfContainer.innerHTML = `
-    <div class="pdf-options">
-      <a href="${webViewLink}" target="_blank" class="pdf-button">Google Driveで開く</a>
-      <a href="${downloadUrl}" class="pdf-button">PDFをダウンロード</a>
+  var viewerContainer = document.createElement('div');
+  viewerContainer.className = 'viewer-container';
+  viewerContainer.innerHTML = `
+    <div class="view-options">
+      <button onclick="toggleView('pdf')" class="view-button">PDFビュー</button>
+      <button onclick="toggleView('text')" class="view-button">テキストビュー</button>
+      <a href="${webViewLink}" target="_blank" class="view-button">Google Driveで開く</a>
+      <a href="${downloadUrl}" class="view-button">PDFをダウンロード</a>
     </div>
-    <div class="pdf-embed">
+    <div id="pdf-view" class="view-content">
       <embed src="${downloadUrl}" type="application/pdf" width="100%" height="600px" />
     </div>
+    <div id="text-view" class="view-content" style="display:none;">
+      <div class="text-content">${content}</div>
+    </div>
   `;
-  chatContainer.appendChild(pdfContainer);
+  chatContainer.appendChild(viewerContainer);
 }
 
+function toggleView(viewType) {
+  document.getElementById('pdf-view').style.display = viewType === 'pdf' ? 'block' : 'none';
+  document.getElementById('text-view').style.display = viewType === 'text' ? 'block' : 'none';
+}
 
     function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
       var chatContainer = document.getElementById('chat-container');
