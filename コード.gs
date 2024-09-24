@@ -101,10 +101,53 @@ function queryDify(userMessage, conversationId, userId) {
   }
 }
 
-// クライアントサイドのHTMLに結果を返す関数
-function handleUserInput(country, message, conversationId, userId) {
-  console.log('Handling user input:', { country, message, conversationId, userId });
-  return processUserMessage(country, message, conversationId, userId);
+// ... 既存のコードはそのままで ...
+
+function handleUserInput(country, message) {
+  console.log('Handling user input:', { country, message });
+  if (message.includes('/')) {
+    return handleTopicDocument(message);
+  }
+  return processUserMessage(country, message);
+}
+
+function handleTopicDocument(topic) {
+  console.log('Handling topic document:', topic);
+  var result = getTopicDocumentContent(topic);
+  return result;
+}
+
+function getTopicDocumentContent(topic) {
+  var fileName = topic.replace('/', ' - '); // 例: "Uganda/政治的発言" を "Uganda - 政治的発言" に変換
+  console.log('Searching for document:', fileName);
+  var files = DriveApp.getFilesByName(fileName);
+  if (files.hasNext()) {
+    var file = files.next();
+    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
+      var doc = DocumentApp.openById(file.getId());
+      return {
+        success: true,
+        content: doc.getBody().getText(),
+        message: `${fileName}の内容を取得しました。`
+      };
+    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
+      return {
+        success: true,
+        content: file.getBlob().getDataAsString(),
+        message: `${fileName}の内容を取得しました。`
+      };
+    } else {
+      return {
+        success: false,
+        message: "ファイルの形式がサポートされていません。"
+      };
+    }
+  } else {
+    return {
+      success: false,
+      message: `${fileName}が見つかりませんでした。`
+    };
+  }
 }
 
 // テスト用関数
