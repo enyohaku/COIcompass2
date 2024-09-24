@@ -305,7 +305,40 @@
       text-decoration: none;
       font-size: 18px;
     }
-  </style>
+
+.pdf-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.pdf-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pdf-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.pdf-button:hover {
+  background-color: #45a049;
+}
+
+.pdf-embed {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ccc;
+}
+
+</style>
 </head>
 
 <body>
@@ -374,27 +407,48 @@
       document.getElementById('chat-container').style.paddingBottom = '100px';
     }
 
-    function openCOIConcept() {
-      if (coiConceptDisplayed) return;
+function openCOIConcept() {
+  if (coiConceptDisplayed) return;
 
-      var button = document.getElementById('coi-concept-button');
-      button.disabled = true;
-      button.textContent = 'Loading...';
+  var button = document.getElementById('coi-concept-button');
+  button.disabled = true;
+  button.textContent = 'Loading...';
 
-      google.script.run
-        .withSuccessHandler(function(content) {
-          hideWelcomeAndButtons();
-          addMessageToChat('bot', content, true, false);
-          coiConceptDisplayed = true;
-          resetCOIConceptButton();
-        })
-        .withFailureHandler(function(error) {
-          console.error('Error:', error);
-          addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました。');
-          resetCOIConceptButton();
-        })
-        .getCOIConceptContent();
-    }
+  google.script.run
+    .withSuccessHandler(function(result) {
+      hideWelcomeAndButtons();
+      if (result.success) {
+        displayPDFViewer(result.url, result.webViewLink, result.name);
+      } else {
+        addMessageToChat('bot', result.message);
+      }
+      coiConceptDisplayed = true;
+      resetCOIConceptButton();
+    })
+    .withFailureHandler(function(error) {
+      console.error('Error:', error);
+      addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました: ' + error.message);
+      resetCOIConceptButton();
+    })
+    .getCOIConceptContent();
+}
+
+  function displayPDFViewer(downloadUrl, webViewLink, fileName) {
+  var chatContainer = document.getElementById('chat-container');
+  var pdfContainer = document.createElement('div');
+  pdfContainer.className = 'pdf-container';
+  pdfContainer.innerHTML = `
+    <div class="pdf-options">
+      <a href="${webViewLink}" target="_blank" class="pdf-button">Google Driveで開く</a>
+      <a href="${downloadUrl}" class="pdf-button">PDFをダウンロード</a>
+    </div>
+    <div class="pdf-embed">
+      <embed src="${downloadUrl}" type="application/pdf" width="100%" height="600px" />
+    </div>
+  `;
+  chatContainer.appendChild(pdfContainer);
+}
+
 
     function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
       var chatContainer = document.getElementById('chat-container');
@@ -447,11 +501,11 @@
       messageElement.appendChild(buttonsContainer);
     }
 
-    function resetCOIConceptButton() {
-      var button = document.getElementById('coi-concept-button');
-      button.disabled = false;
-      button.textContent = 'COIの考え方';
-    }
+function resetCOIConceptButton() {
+  var button = document.getElementById('coi-concept-button');
+  button.disabled = false;
+  button.textContent = 'COIの考え方';
+}
 
     function sendMessage() {
       var userInput = document.getElementById('user-input');

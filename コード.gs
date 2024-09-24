@@ -165,19 +165,24 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
 function getCOIConceptContent() {
   const fileName = "COIの考え方";
   var files = DriveApp.getFilesByName(fileName);
-  if (files.hasNext()) {
+  
+  while (files.hasNext()) {
     var file = files.next();
-    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
-      var doc = DocumentApp.openById(file.getId());
-      return doc.getBody().getText();
-    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
-      return file.getBlob().getDataAsString();
-    } else {
-      return "ファイルの形式がサポートされていません。";
+    if (file.getMimeType() === MimeType.PDF) {
+      return {
+        success: true,
+        type: 'pdf',
+        url: file.getDownloadUrl(),
+        webViewLink: file.getUrl(),
+        name: file.getName()
+      };
     }
-  } else {
-    return "COIの考え方に関するファイルが見つかりませんでした。";
   }
+
+  return {
+    success: false,
+    message: "COIの考え方のPDFファイルが見つかりませんでした。"
+  };
 }
 
 // 以下は元のコードにあった追加の関数です
