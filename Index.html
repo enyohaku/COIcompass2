@@ -52,22 +52,23 @@
       padding: 10px 15px;
     }
 
-     .home-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px 15px;
-  }
+    .home-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 15px;
+    }
 
-  .home-icon svg {
-    width: 54px;
-    height: 54px;
-    stroke: #000000; /* アイコンの色 */
-  }
+    .home-icon svg {
+      width: 54px;
+      height: 54px;
+      stroke: #000000;
+      /* アイコンの色 */
+    }
 
-  .home-icon:hover svg {
-    opacity: 0.7;
-  }
+    .home-icon:hover svg {
+      opacity: 0.7;
+    }
 
     #chat-container {
       height: calc(100vh - 300px);
@@ -111,7 +112,9 @@
       color: #4a4a4a;
     }
 
-    #country-selection, #uganda-options, #topic-options {
+    #country-selection,
+    #uganda-options,
+    #topic-options {
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -120,7 +123,9 @@
       padding: 0 20px;
     }
 
-    #country-selection button, #uganda-options button, #topic-options button {
+    #country-selection button,
+    #uganda-options button,
+    #topic-options button {
       width: 100%;
       padding: 20px;
       background-color: #4CAF50;
@@ -134,7 +139,9 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    #country-selection button:hover, #uganda-options button:hover, #topic-options button:hover {
+    #country-selection button:hover,
+    #uganda-options button:hover,
+    #topic-options button:hover {
       background-color: #45a049;
       transform: scale(1.02);
     }
@@ -214,7 +221,7 @@
       body {
         padding-top: 50px;
       }
-      
+
       header {
         height: 120px;
       }
@@ -225,21 +232,107 @@
       }
     }
 
+    header {
+      background-color: #ffffff;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 120px;
+    }
+
+    .logo {
+      height: 100px;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 15px;
+      font-size: 54px;
+    }
+
+    .home-icon svg {
+      width: 54px;
+      height: 54px;
+      stroke: #000000;
+    }
+
+    .header-icon:hover {
+      opacity: 0.7;
+    }
+
+    #hamburger-menu {
+      position: fixed;
+      top: 120px;
+      right: -300px;
+      width: 300px;
+      height: calc(100% - 120px);
+      background-color: #f8f8f8;
+      transition: right 0.3s ease-in-out;
+      overflow-y: auto;
+      z-index: 999;
+    }
+
+    #hamburger-menu.menu-visible {
+      right: 0;
+    }
+
+    #hamburger-menu nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #hamburger-menu nav ul li {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    #hamburger-menu nav ul li a {
+      color: #333;
+      text-decoration: none;
+      font-size: 18px;
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo"
-      class="logo">
-    <button class="hamburger" onclick="toggleDriveResults()">☰</button>
-    <button id="home-button" class="home-icon" onclick="goHome()" aria-label="ホームに戻る">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-  </svg>
+    <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
+    <div class="header-buttons">
+      <button id="home-button" class="header-icon home-icon" onclick="goHome()" aria-label="ホームに戻る">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </button>
+      <button id="hamburger-button" class="header-icon hamburger" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
+    </div>
   </header>
-
+  <div id="hamburger-menu" class="menu-hidden">
+    <nav>
+      <ul>
+        <li><a href="#search">検索</a></li>
+        <li><a href="#bookmarks">ブックマーク</a></li>
+        <li><a href="#history">履歴</a></li>
+        <li><a href="#settings">設定</a></li>
+        <li><a href="#help">ヘルプ/FAQ</a></li>
+        <li><a href="#about">アバウト</a></li>
+      </ul>
+    </nav>
+  </div>
   <div id="chat-container">
     <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
     <div id="country-selection">
@@ -257,7 +350,7 @@
 
   <div id="drive-results"></div>
 
-<script>
+  <script>
     var selectedCountry = '';
     let coiConceptDisplayed = false;
 
@@ -412,11 +505,12 @@
         <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
       </div>
     `;
-
-    // オプション：ユーザーにフィードバックを提供
     console.log("ホーム画面に戻りました");
-    // あるいは、画面上に通知を表示する場合:
-    // showNotification("ホーム画面に戻りました");
+  }
+
+  function toggleHamburgerMenu() {
+    const menu = document.getElementById('hamburger-menu');
+    menu.classList.toggle('menu-visible');
   }
 
   // オプション：通知を表示する関数
@@ -488,7 +582,8 @@
     });
 
     
-</script>
+  </script>
 
 </body>
+
 </html>
