@@ -163,48 +163,61 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
 }
 
 function getCOIConceptContent() {
-  const fileName = "COIの考え方";
-  var files = DriveApp.getFilesByName(fileName);
-  
-  while (files.hasNext()) {
-    var file = files.next();
-    if (file.getMimeType() === MimeType.PDF) {
-      var pdfContent = extractTextFromPDF(file);
-      return {
-        success: true,
-        type: 'pdf',
-        url: file.getDownloadUrl(),
-        webViewLink: file.getUrl(),
-        name: file.getName(),
-        content: pdfContent
-      };
+  try {
+    const fileName = "COIの考え方";
+    var files = DriveApp.getFilesByName(fileName);
+    
+    while (files.hasNext()) {
+      var file = files.next();
+      if (file.getMimeType() === MimeType.PDF) {
+        var pdfContent = extractTextFromPDF(file);
+        return {
+          success: true,
+          type: 'pdf',
+          url: file.getDownloadUrl(),
+          webViewLink: file.getUrl(),
+          name: file.getName(),
+          content: pdfContent
+        };
+      }
     }
-  }
 
-  return {
-    success: false,
-    message: "COIの考え方のPDFファイルが見つかりませんでした。"
-  };
+    return {
+      success: false,
+      message: "COIの考え方のPDFファイルが見つかりませんでした。"
+    };
+  } catch (error) {
+    console.error('Error in getCOIConceptContent:', error);
+    return {
+      success: false,
+      message: "エラーが発生しました: " + error.toString()
+    };
+  }
 }
 
+
 function extractTextFromPDF(file) {
-  var blob = file.getBlob();
-  var resource = {
-    title: file.getName(),
-    mimeType: MimeType.PDF
-  };
-  
-  // PDFファイルをGoogle Docsに変換
-  var doc = Drive.Files.insert(resource, blob, {ocr: true, ocrLanguage: 'ja'});
-  
-  // 変換されたドキュメントを開く
-  var docFile = DocumentApp.openById(doc.id);
-  var text = docFile.getBody().getText();
-  
-  // 一時的に作成したGoogle Docsファイルを削除
-  Drive.Files.remove(doc.id);
-  
-  return text;
+  try {
+    // PDFファイルをGoogle Docsに変換
+    var blob = file.getBlob();
+    var resource = {
+      title: file.getName() + ' (Converted)',
+      mimeType: MimeType.GOOGLE_DOCS
+    };
+    var docFile = Drive.Files.insert(resource, blob, {convert: true});
+    
+    // 変換されたドキュメントを開く
+    var doc = DocumentApp.openById(docFile.id);
+    var text = doc.getBody().getText();
+    
+    // 一時的に作成したGoogle Docsファイルを削除
+    Drive.Files.remove(docFile.id);
+    
+    return text;
+  } catch (error) {
+    console.error('Error in extractTextFromPDF:', error);
+    return "PDFからのテキスト抽出中にエラーが発生しました: " + error.toString();
+  }
 }
 
 // 以下は元のコードにあった追加の関数です
