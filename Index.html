@@ -387,6 +387,14 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.coi-concept-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .coi-concept-content h2 {
   font-size: 24px;
   margin-bottom: 15px;
@@ -412,12 +420,11 @@
   background-color: #45a049;
 }
 
-.content-text {
-  font-size: 16px;
-  line-height: 1.6;
-  white-space: pre-wrap;
+.pdf-notice {
+  margin-top: 15px;
+  font-style: italic;
+  color: #666;
 }
-
 </style>
 </head>
 
@@ -496,9 +503,10 @@ function openCOIConcept() {
 
   google.script.run
     .withSuccessHandler(function(result) {
+      console.log('getCOIConceptContent result:', result);  // ログを追加
       hideWelcomeAndButtons();
       if (result.success) {
-        displayCOIConceptContent(result.content, result.webViewLink, result.url, result.name);
+        displayCOIConceptContent(result);
       } else {
         addMessageToChat('bot', result.message);
       }
@@ -506,29 +514,37 @@ function openCOIConcept() {
       resetCOIConceptButton();
     })
     .withFailureHandler(function(error) {
-      console.error('Error:', error);
+      console.error('Error in openCOIConcept:', error);
       addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました: ' + error.message);
       resetCOIConceptButton();
     })
     .getCOIConceptContent();
 }
 
-function displayCOIConceptContent(content, webViewLink, downloadUrl, fileName) {
+function displayCOIConceptContent(result) {
   var chatContainer = document.getElementById('chat-container');
   var contentContainer = document.createElement('div');
   contentContainer.className = 'coi-concept-content';
   contentContainer.innerHTML = `
-    <h2>${fileName}</h2>
+    <h2>${result.name}</h2>
+    <p>ファイルサイズ: ${formatFileSize(result.size)}</p>
+    <p>最終更新日: ${result.lastUpdated}</p>
     <div class="content-options">
-      <a href="${webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
-      <a href="${downloadUrl}" class="content-button">PDFをダウンロード</a>
+      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
     </div>
-    <div class="content-text">${content}</div>
+    <p class="pdf-notice">PDFの内容はリンクから直接ご覧ください。</p>
   `;
   chatContainer.appendChild(contentContainer);
   
   // スクロールして新しいコンテンツを表示
   contentContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' bytes';
+  else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  else return (bytes / 1048576).toFixed(1) + ' MB';
 }
 
 
