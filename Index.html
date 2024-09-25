@@ -44,19 +44,17 @@
       height: 100px;
     }
 
-    .hamburger {
-      font-size: 54px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 10px 15px;
+    .header-buttons {
+      display: flex;
+      align-items: flex-start;
     }
 
-    .home-icon {
+    .header-icon {
       background: none;
       border: none;
       cursor: pointer;
       padding: 10px 15px;
+      font-size: 54px;
     }
 
     .home-icon svg {
@@ -65,7 +63,11 @@
       stroke: #000000;
     }
 
-    .home-icon:hover svg {
+    .hamburger-icon {
+      margin-top: -10px;
+    }
+
+    .header-icon:hover {
       opacity: 0.7;
     }
 
@@ -305,166 +307,165 @@
       font-size: 18px;
     }
 
-.pdf-container {
-  width: 100%;
-  margin-top: 20px;
-}
+    .pdf-container {
+      width: 100%;
+      margin-top: 20px;
+    }
 
-.pdf-options {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
+    .pdf-options {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
 
-.pdf-button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-size: 16px;
-}
+    .pdf-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
 
-.pdf-button:hover {
-  background-color: #45a049;
-}
+    .pdf-button:hover {
+      background-color: #45a049;
+    }
 
-.pdf-embed {
-  width: 100%;
-  height: 600px;
-  border: 1px solid #ccc;
-}
+    .pdf-embed {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ccc;
+    }
 
-.viewer-container {
-  width: 100%;
-  margin-top: 20px;
-}
+    .viewer-container {
+      width: 100%;
+      margin-top: 20px;
+    }
 
-.view-options {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
+    .view-options {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
 
-.view-button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-}
+    .view-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+    }
 
-.view-button:hover {
-  background-color: #45a049;
-}
+    .view-button:hover {
+      background-color: #45a049;
+    }
 
-.view-content {
-  width: 100%;
-  height: 600px;
-  border: 1px solid #ccc;
-  overflow-y: auto;
-}
+    .view-content {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+    }
 
-.text-content {
-  padding: 20px;
-  font-size: 16px;
-  line-height: 1.6;
-}
+    .text-content {
+      padding: 20px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
 
-.coi-concept-content {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .coi-concept-content {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.coi-concept-content {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .coi-concept-content {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.coi-concept-content h2 {
-  font-size: 24px;
-  margin-bottom: 15px;
-}
+    .coi-concept-content h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
 
-.content-options {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
+    .content-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-.content-button {
-  display: inline-block;
-  padding: 10px 15px;
-  background-color: #4CAF50;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  font-size: 16px;
-}
+    .content-button {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
 
-.content-button:hover {
-  background-color: #45a049;
-}
+    .content-button:hover {
+      background-color: #45a049;
+    }
 
-.pdf-notice {
-  margin-top: 15px;
-  font-style: italic;
-  color: #666;
-}
+    .pdf-notice {
+      margin-top: 15px;
+      font-style: italic;
+      color: #666;
+    }
 
-.dark-theme {
-  background-color: #333;
-  color: #f0f0f0;
-}
+    .dark-theme {
+      background-color: #333;
+      color: #f0f0f0;
+    }
 
-.dark-theme .message {
-  background-color: #444;
-}
+    .dark-theme .message {
+      background-color: #444;
+    }
 
-.dark-theme .user-message {
-  background-color: #2a5d2a;
-}
+    .dark-theme .user-message {
+      background-color: #2a5d2a;
+    }
 
-.dark-theme .bot-message {
-  background-color: #444;
-}
+    .dark-theme .bot-message {
+      background-color: #444;
+    }
 
-.dark-theme #input-area {
-  background-color: #222;
-}
+    .dark-theme #input-area {
+      background-color: #222;
+    }
 
-.dark-theme #user-input {
-  background-color: #444;
-  color: #f0f0f0;
-  border-color: #666;
-}
+    .dark-theme #user-input {
+      background-color: #444;
+      color: #f0f0f0;
+      border-color: #666;
+    }
 
-.dark-theme #send-button {
-  background-color: #4CAF50;
-}
+    .dark-theme #send-button {
+      background-color: #4CAF50;
+    }
 
-.dark-theme #hamburger-menu {
-  background-color: #222;
-}
+    .dark-theme #hamburger-menu {
+      background-color: #222;
+    }
 
-.dark-theme #hamburger-menu nav ul li a {
-  color: #f0f0f0;
-}
-
-</style>
+    .dark-theme #hamburger-menu nav ul li a {
+      color: #f0f0f0;
+    }
+  </style>
 </head>
 
 <body>
@@ -480,25 +481,25 @@
       <button id="hamburger-button" class="header-icon hamburger" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
     </div>
   </header>
-<div id="hamburger-menu" class="menu-hidden">
-  <nav>
-    <ul>
-      <li><a href="#about-coi-compass">COICompassとは</a></li>
-      <li><a href="#how-to-use">使い方</a></li>
-      <li><a href="#toggle-theme">テーマ切り替え</a></li>
-      <li><a href="#increase-font-size">表示文字を大きくする</a></li>
-      <li><a href="#feedback">フィードバック/改善提案</a></li>
-    </ul>
-  </nav>
-</div>
+  <div id="hamburger-menu" class="menu-hidden">
+    <nav>
+      <ul>
+        <li><a href="#about-coi-compass">COICompassとは</a></li>
+        <li><a href="#how-to-use">使い方</a></li>
+        <li><a href="#toggle-theme">テーマ切り替え</a></li>
+        <li><a href="#increase-font-size">表示文字を大きくする</a></li>
+        <li><a href="#feedback">フィードバック/改善提案</a></li>
+      </ul>
+    </nav>
+  </div>
   <div id="chat-container">
     <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
     <div id="country-selection">
       <button onclick="handleCountrySelection('Uganda')">Uganda ウガンダ</button>
       <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka スリランカ</button>
       <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
-       <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
-        <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
+      <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
+      <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
       <button id="coi-concept-button" onclick="openCOIConcept()">COI（出身国情報）について</button>
     </div>
   </div>
@@ -514,31 +515,23 @@
     var selectedCountry = '';
     let coiConceptDisplayed = false;
 
-    const topics = {
-      'Uganda': ['政治的発言', 'ジェンダー']
-    };
-    const topics = {
-      'Sri Lanaka': ['政治的発言', 'ジェンダー']
-    };
-    const topics = {
-      'Nigeria': ['政治的発言', 'ジェンダー']
-    };
-    const topics = {
-      'Cameroon': ['政治的発言', 'ジェンダー']
-    };
-    const topics = {
-      'Cambodia': ['政治的発言', 'ジェンダー']
-    };
+const topics = {
+  'Uganda': ['政治的発言', 'ジェンダー'],
+  'Sri Lanka': ['政治的発言', 'ジェンダー'],
+  'Nigeria': ['政治的発言', 'ジェンダー'],
+  'Cameroon': ['政治的発言', 'ジェンダー'],
+  'Cambodia': ['政治的発言', 'ジェンダー']
+};
 
 
-    function handleCountrySelection(country) {
-      selectedCountry = country;
-      hideWelcomeAndButtons();
-      addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
-      if (country === 'Uganda') {
-        showTopicOptions(country);
-      }
-    }
+function handleCountrySelection(country) {
+  selectedCountry = country;  // 選ばれた国をセット
+  hideWelcomeAndButtons();    // UIの変更
+  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+
+  // トピック表示用の関数を呼び出す
+  showTopicOptions(country);  
+}
 
     function hideWelcomeAndButtons() {
       document.getElementById('country-selection').style.display = 'none';
@@ -546,6 +539,24 @@
       document.getElementById('input-area').style.display = 'flex';
       document.getElementById('chat-container').style.paddingBottom = '100px';
     }
+
+  function showTopicOptions(country) {
+  const topicList = topics[country];  // 選択された国に対応するトピックを取得
+
+  if (topicList) {
+    let message = `${country}に関する以下のトピックから選んでください:\n`;
+    topicList.forEach((topic, index) => {
+      message += `${index + 1}. ${topic}\n`;  // トピックを番号付きでリスト表示
+    });
+    addMessageToChat('bot', message);  // チャットにトピックを表示
+  } else {
+    addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
+  }
+}
+function addMessageToChat(sender, message) {
+  // チャットにメッセージを追加する関数の仮想実装
+  console.log(`${sender}: ${message}`);
+}
 
 function openCOIConcept() {
   if (coiConceptDisplayed) return;
