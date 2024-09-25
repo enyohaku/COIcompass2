@@ -379,6 +379,45 @@
   line-height: 1.6;
 }
 
+.coi-concept-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.coi-concept-content h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.content-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.content-button {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.content-button:hover {
+  background-color: #45a049;
+}
+
+.content-text {
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 </style>
 </head>
 
@@ -459,7 +498,7 @@ function openCOIConcept() {
     .withSuccessHandler(function(result) {
       hideWelcomeAndButtons();
       if (result.success) {
-        displayPDFAndTextViewer(result.url, result.webViewLink, result.name, result.content);
+        displayCOIConceptContent(result.content, result.webViewLink, result.url, result.name);
       } else {
         addMessageToChat('bot', result.message);
       }
@@ -474,26 +513,24 @@ function openCOIConcept() {
     .getCOIConceptContent();
 }
 
-function displayPDFAndTextViewer(downloadUrl, webViewLink, fileName, content) {
+function displayCOIConceptContent(content, webViewLink, downloadUrl, fileName) {
   var chatContainer = document.getElementById('chat-container');
-  var viewerContainer = document.createElement('div');
-  viewerContainer.className = 'viewer-container';
-  viewerContainer.innerHTML = `
-    <div class="view-options">
-      <button onclick="toggleView('pdf')" class="view-button">PDFビュー</button>
-      <button onclick="toggleView('text')" class="view-button">テキストビュー</button>
-      <a href="${webViewLink}" target="_blank" class="view-button">Google Driveで開く</a>
-      <a href="${downloadUrl}" class="view-button">PDFをダウンロード</a>
+  var contentContainer = document.createElement('div');
+  contentContainer.className = 'coi-concept-content';
+  contentContainer.innerHTML = `
+    <h2>${fileName}</h2>
+    <div class="content-options">
+      <a href="${webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+      <a href="${downloadUrl}" class="content-button">PDFをダウンロード</a>
     </div>
-    <div id="pdf-view" class="view-content">
-      <embed src="${downloadUrl}" type="application/pdf" width="100%" height="600px" />
-    </div>
-    <div id="text-view" class="view-content" style="display:none;">
-      <div class="text-content">${content}</div>
-    </div>
+    <div class="content-text">${content}</div>
   `;
-  chatContainer.appendChild(viewerContainer);
+  chatContainer.appendChild(contentContainer);
+  
+  // スクロールして新しいコンテンツを表示
+  contentContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
 
 function toggleView(viewType) {
   document.getElementById('pdf-view').style.display = viewType === 'pdf' ? 'block' : 'none';

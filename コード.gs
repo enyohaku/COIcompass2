@@ -195,7 +195,6 @@ function getCOIConceptContent() {
   }
 }
 
-
 function extractTextFromPDF(file) {
   try {
     // PDFファイルをGoogle Docsに変換
