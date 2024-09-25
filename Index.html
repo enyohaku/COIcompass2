@@ -233,48 +233,6 @@
       }
     }
 
-    /* header {
-      background-color: #ffffff;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      height: 120px;
-    }
-
-    .logo {
-      height: 100px;
-    }
-
-    .header-buttons {
-      display: flex;
-      align-items: center;
-    }
-
-    .header-icon {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 10px 15px;
-      font-size: 54px;
-    }
-
-    .home-icon svg {
-      width: 54px;
-      height: 54px;
-      stroke: #000000;
-    }
-
-    .header-icon:hover {
-      opacity: 0.7;
-    } */
-
     #hamburger-menu {
       position: fixed;
       top: 120px;
@@ -843,21 +801,38 @@ document.querySelectorAll('#hamburger-menu a').forEach(item => {
       addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
     }
 
-    document.getElementById('user-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
+document.getElementById('user-input').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    // IMEの変換確定でないかチェック
+    if (event.isComposing || event.keyCode === 229) {
+      event.preventDefault();
+      return;
+    }
+    
+    // Shiftキーが押されていない場合のみ送信
+    if (!event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  }
+});
 
+function sendMessage() {
+  var userInput = document.getElementById('user-input');
+  var message = userInput.value;
+  if (message.trim() === '') return;
+  addMessageToChat('user', message);
+  userInput.value = '';
+  google.script.run.withSuccessHandler(handleResponse).handleUserInput(selectedCountry, message);
+}
+
+// 他の関数は変更なし
     document.getElementById('coi-concept-button').addEventListener('click', function() {
       if (this.disabled || coiConceptDisplayed) return;
       openCOIConcept();
     });
 
     
-  </script>
-
+</script>
 </body>
-
 </html>
