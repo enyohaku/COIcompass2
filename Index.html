@@ -63,7 +63,6 @@
       width: 54px;
       height: 54px;
       stroke: #000000;
-      /* アイコンの色 */
     }
 
     .home-icon:hover svg {
@@ -232,7 +231,7 @@
       }
     }
 
-    header {
+    /* header {
       background-color: #ffffff;
       padding: 15px;
       display: flex;
@@ -272,7 +271,7 @@
 
     .header-icon:hover {
       opacity: 0.7;
-    }
+    } */
 
     #hamburger-menu {
       position: fixed;
@@ -425,6 +424,46 @@
   font-style: italic;
   color: #666;
 }
+
+.dark-theme {
+  background-color: #333;
+  color: #f0f0f0;
+}
+
+.dark-theme .message {
+  background-color: #444;
+}
+
+.dark-theme .user-message {
+  background-color: #2a5d2a;
+}
+
+.dark-theme .bot-message {
+  background-color: #444;
+}
+
+.dark-theme #input-area {
+  background-color: #222;
+}
+
+.dark-theme #user-input {
+  background-color: #444;
+  color: #f0f0f0;
+  border-color: #666;
+}
+
+.dark-theme #send-button {
+  background-color: #4CAF50;
+}
+
+.dark-theme #hamburger-menu {
+  background-color: #222;
+}
+
+.dark-theme #hamburger-menu nav ul li a {
+  color: #f0f0f0;
+}
+
 </style>
 </head>
 
@@ -441,25 +480,26 @@
       <button id="hamburger-button" class="header-icon hamburger" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
     </div>
   </header>
-  <div id="hamburger-menu" class="menu-hidden">
-    <nav>
-      <ul>
-        <li><a href="#search">検索</a></li>
-        <li><a href="#bookmarks">ブックマーク</a></li>
-        <li><a href="#history">履歴</a></li>
-        <li><a href="#settings">設定</a></li>
-        <li><a href="#help">ヘルプ/FAQ</a></li>
-        <li><a href="#about">アバウト</a></li>
-      </ul>
-    </nav>
-  </div>
+<div id="hamburger-menu" class="menu-hidden">
+  <nav>
+    <ul>
+      <li><a href="#about-coi-compass">COICompassとは</a></li>
+      <li><a href="#how-to-use">使い方</a></li>
+      <li><a href="#toggle-theme">テーマ切り替え</a></li>
+      <li><a href="#increase-font-size">表示文字を大きくする</a></li>
+      <li><a href="#feedback">フィードバック/改善提案</a></li>
+    </ul>
+  </nav>
+</div>
   <div id="chat-container">
     <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
     <div id="country-selection">
-      <button onclick="handleCountrySelection('Uganda')">Uganda</button>
-      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
-      <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
-      <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
+      <button onclick="handleCountrySelection('Uganda')">Uganda ウガンダ</button>
+      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka スリランカ</button>
+      <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
+       <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
+        <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
+      <button id="coi-concept-button" onclick="openCOIConcept()">COI（出身国情報）について</button>
     </div>
   </div>
 
@@ -477,6 +517,19 @@
     const topics = {
       'Uganda': ['政治的発言', 'ジェンダー']
     };
+    const topics = {
+      'Sri Lanaka': ['政治的発言', 'ジェンダー']
+    };
+    const topics = {
+      'Nigeria': ['政治的発言', 'ジェンダー']
+    };
+    const topics = {
+      'Cameroon': ['政治的発言', 'ジェンダー']
+    };
+    const topics = {
+      'Cambodia': ['政治的発言', 'ジェンダー']
+    };
+
 
     function handleCountrySelection(country) {
       selectedCountry = country;
@@ -665,10 +718,63 @@ function resetCOIConceptButton() {
     console.log("ホーム画面に戻りました");
   }
 
-  function toggleHamburgerMenu() {
-    const menu = document.getElementById('hamburger-menu');
-    menu.classList.toggle('menu-visible');
+function toggleHamburgerMenu() {
+  const menu = document.getElementById('hamburger-menu');
+  menu.classList.toggle('menu-visible');
+}
+
+function handleMenuItemClick(event) {
+  event.preventDefault();
+  const clickedItem = event.target.getAttribute('href').substring(1);
+  
+  switch(clickedItem) {
+    case 'about-coi-compass':
+      showAboutCOICompass();
+      break;
+    case 'how-to-use':
+      showHowToUse();
+      break;
+    case 'toggle-theme':
+      toggleTheme();
+      break;
+    case 'increase-font-size':
+      increaseFontSize();
+      break;
+    case 'feedback':
+      showFeedbackForm();
+      break;
   }
+  
+  toggleHamburgerMenu(); // メニューを閉じる
+}
+
+// 各機能の実装（例）
+function showAboutCOICompass() {
+  addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
+}
+
+function showHowToUse() {
+  addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark-theme');
+  // ダークテーマのCSSを適用する処理を追加
+}
+
+function increaseFontSize() {
+  document.body.style.fontSize = parseInt(getComputedStyle(document.body).fontSize) + 2 + 'px';
+}
+
+function showFeedbackForm() {
+  addMessageToChat('bot', 'フィードバックをお聞かせください。改善のためのご意見をお待ちしております。');
+  // フィードバックフォームを表示する処理を追加
+}
+
+// イベントリスナーの追加
+document.querySelectorAll('#hamburger-menu a').forEach(item => {
+  item.addEventListener('click', handleMenuItemClick);
+});
 
   // オプション：通知を表示する関数
   function showNotification(message) {
