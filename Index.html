@@ -159,6 +159,8 @@
       align-items: center;
       box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
       height: 180px;
+      display: none;
+      /* 初期状態は非表示 */
     }
 
     #user-input {
@@ -428,13 +430,13 @@
   <header>
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
     <div class="header-buttons">
-      <button id="home-button" class="header-icon home-icon" onclick="goHome()" aria-label="ホームに戻る">
+      <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
       </button>
-      <button id="hamburger-button" class="header-icon hamburger-icon" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
+      <button id="hamburger-button" class="header-icon hamburger-icon" aria-label="メニューを開く">☰</button>
     </div>
   </header>
   <div id="hamburger-menu" class="menu-hidden">
@@ -451,11 +453,11 @@
   <div id="chat-container">
     <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
     <div id="country-selection">
-      <button onclick="handleCountrySelection('Uganda')">Uganda ウガンダ</button>
-      <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka スリランカ</button>
-      <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
-      <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
-      <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
+      <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
+      <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
+      <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
+      <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
+      <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
       <button id="coi-concept-button">COI（出身国情報）について</button>
     </div>
   </div>
@@ -468,6 +470,8 @@
   <div id="drive-results"></div>
 
   <script>
+    console.log("Script loaded");
+
     var selectedCountry = '';
     let coiConceptDisplayed = false;
 
@@ -478,6 +482,22 @@
       'Cameroon': ['政治的発言', 'ジェンダー'],
       'Cambodia': ['政治的発言', 'ジェンダー']
     };
+
+    // イベントリスナーの設定
+    document.getElementById('home-button').addEventListener('click', goHome);
+    document.getElementById('hamburger-button').addEventListener('click', toggleHamburgerMenu);
+    document.getElementById('send-button').addEventListener('click', sendMessage);
+    document.getElementById('coi-concept-button').addEventListener('click', function () {
+      if (this.disabled || coiConceptDisplayed) return;
+      openCOIConcept();
+    });
+
+    // 国選択ボタンのイベントリスナー
+    document.querySelectorAll('.country-button').forEach(button => {
+      button.addEventListener('click', function () {
+        handleCountrySelection(this.getAttribute('data-country'));
+      });
+    });
 
     function handleCountrySelection(country) {
       selectedCountry = country;
@@ -491,21 +511,34 @@
       coiConceptDisplayed = false;
       document.getElementById('country-selection').style.display = 'flex';
       document.getElementById('welcome-message').style.display = 'block';
-      document.getElementById('input-area').style.display = 'none';
+      document.getElementById('input-area').style.display = 'flex';
+
+      // プレースホルダーテキストを変更
+  document.getElementById('user-input').placeholder = '国を選択してください';
+
       document.getElementById('chat-container').innerHTML = `
         <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
         <div id="country-selection">
-          <button onclick="handleCountrySelection('Uganda')">Uganda ウガンダ</button>
-          <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka スリランカ</button>
-          <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
-          <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
-          <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
+          <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
+          <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
+          <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
+          <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
+          <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
           <button id="coi-concept-button">COI（出身国情報）について</button>
         </div>
       `;
-      console.log("ホーム画面に戻りました");
-    }
-
+// 新しく生成されたボタンにイベントリスナーを再設定
+  document.querySelectorAll('.country-button').forEach(button => {
+    button.addEventListener('click', function () {
+      handleCountrySelection(this.getAttribute('data-country'));
+    });
+  });
+  document.getElementById('coi-concept-button').addEventListener('click', function () {
+    if (this.disabled || coiConceptDisplayed) return;
+    openCOIConcept();
+  });
+  console.log("ホーム画面に戻りました");
+}
     function hideWelcomeAndButtons() {
       document.getElementById('country-selection').style.display = 'none';
       document.getElementById('welcome-message').style.display = 'none';
@@ -533,7 +566,7 @@
       messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
 
       var paragraphs = message.split('\n');
-      paragraphs.forEach(function(paragraph) {
+      paragraphs.forEach(function (paragraph) {
         var p = document.createElement('p');
         p.textContent = paragraph;
         messageElement.appendChild(p);
@@ -554,7 +587,7 @@
 
     function appendButtonsAfterContent(messageElement) {
       var buttonsContainer = document.createElement('div');
-      buttonsContainer.id = 'country-selection';
+      buttonsContainer.className = 'country-selection'; // クラス名に変更
       buttonsContainer.style.display = 'flex';
       buttonsContainer.style.flexDirection = 'column';
       buttonsContainer.style.gap = '20px';
@@ -562,17 +595,22 @@
       buttonsContainer.style.margin = '20px auto 0';
 
       var countries = ['Uganda', 'Sri Lanka', 'Nigeria'];
-      countries.forEach(function(country) {
+      countries.forEach(function (country) {
         var button = document.createElement('button');
         button.textContent = country;
-        button.onclick = function() { handleCountrySelection(country); };
+        button.className = 'country-button'; // クラス名追加
+        button.setAttribute('data-country', country);
+        button.addEventListener('click', function () { handleCountrySelection(country); });
         buttonsContainer.appendChild(button);
       });
 
       var coiButton = document.createElement('button');
       coiButton.textContent = 'COIの考え方';
       coiButton.id = 'coi-concept-button';
-      coiButton.onclick = openCOIConcept;
+      coiButton.addEventListener('click', function () {
+        if (this.disabled || coiConceptDisplayed) return;
+        openCOIConcept();
+      });
       buttonsContainer.appendChild(coiButton);
 
       messageElement.appendChild(buttonsContainer);
@@ -580,19 +618,23 @@
 
     function resetCOIConceptButton() {
       var button = document.getElementById('coi-concept-button');
-      button.disabled = false;
-      button.textContent = 'COIの考え方';
+      if (button) {
+        button.disabled = false;
+        button.textContent = 'COIの考え方';
+      }
     }
 
     function openCOIConcept() {
       if (coiConceptDisplayed) return;
 
       var button = document.getElementById('coi-concept-button');
+      if (!button) return;
+
       button.disabled = true;
       button.textContent = 'Loading...';
 
       google.script.run
-        .withSuccessHandler(function(result) {
+        .withSuccessHandler(function (result) {
           console.log('getCOIConceptContent result:', result);  // ログを追加
           hideWelcomeAndButtons();
           if (result.success) {
@@ -603,7 +645,7 @@
           coiConceptDisplayed = true;
           resetCOIConceptButton();
         })
-        .withFailureHandler(function(error) {
+        .withFailureHandler(function (error) {
           console.error('Error in openCOIConcept:', error);
           addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました: ' + error.message);
           resetCOIConceptButton();
@@ -667,7 +709,7 @@
         container.innerHTML += '<p>関連する文書は見つかりませんでした。</p>';
         return;
       }
-      results.forEach(function(file) {
+      results.forEach(function (file) {
         container.innerHTML += `
           <div>
             <strong>${file.name}</strong><br>
@@ -689,7 +731,7 @@
       console.log(`Navigating to ${targetSection}`);
       toggleHamburgerMenu();
       // 各セクションに対する処理を追加
-      switch(targetSection) {
+      switch (targetSection) {
         case 'about-coi-compass':
           showAboutCOICompass();
           break;
@@ -768,18 +810,12 @@
       addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
     }
 
-    document.getElementById('user-input').addEventListener('keydown', function(event) {
+    // Keydown event for 'user-input'
+    document.getElementById('user-input').addEventListener('keydown', function (event) {
       if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
         event.preventDefault();
         sendMessage();
       }
-    });
-
-    // 他の関数は変更なし
-
-    document.getElementById('coi-concept-button').addEventListener('click', function() {
-      if (this.disabled || coiConceptDisplayed) return;
-      openCOIConcept();
     });
 
     function toggleHamburgerMenu() {
