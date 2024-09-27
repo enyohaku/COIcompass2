@@ -7,6 +7,7 @@
   <title>COI Compass</title>
   <base target="_top">
   <style>
+    /* CSSは以前と同じ内容を使用 */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -249,6 +250,11 @@
       right: 0;
     }
 
+    /* 追加: .menu-hidden クラス */
+    #hamburger-menu.menu-hidden {
+      right: -300px;
+    }
+
     #hamburger-menu nav ul {
       list-style-type: none;
       padding: 0;
@@ -346,14 +352,6 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .coi-concept-content {
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
     .coi-concept-content h2 {
       font-size: 24px;
       margin-bottom: 15px;
@@ -431,12 +429,12 @@
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
     <div class="header-buttons">
       <button id="home-button" class="header-icon home-icon" onclick="goHome()" aria-label="ホームに戻る">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    </button>
-      <button id="hamburger-button" class="header-icon hamburger" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </button>
+      <button id="hamburger-button" class="header-icon hamburger-icon" onclick="toggleHamburgerMenu()" aria-label="メニューを開く">☰</button>
     </div>
   </header>
   <div id="hamburger-menu" class="menu-hidden">
@@ -458,13 +456,13 @@
       <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
       <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
       <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
-      <button id="coi-concept-button" onclick="openCOIConcept()">COI（出身国情報）について</button>
+      <button id="coi-concept-button">COI（出身国情報）について</button>
     </div>
   </div>
 
   <div id="input-area">
     <input type="text" id="user-input" placeholder="質問を入力してください">
-    <button id="send-button" onclick="sendMessage()">送信</button>
+    <button id="send-button">送信</button>
   </div>
 
   <div id="drive-results"></div>
@@ -473,23 +471,40 @@
     var selectedCountry = '';
     let coiConceptDisplayed = false;
 
-const topics = {
-  'Uganda': ['政治的発言', 'ジェンダー'],
-  'Sri Lanka': ['政治的発言', 'ジェンダー'],
-  'Nigeria': ['政治的発言', 'ジェンダー'],
-  'Cameroon': ['政治的発言', 'ジェンダー'],
-  'Cambodia': ['政治的発言', 'ジェンダー']
-};
+    const topics = {
+      'Uganda': ['政治的発言', 'ジェンダー'],
+      'Sri Lanka': ['政治的発言', 'ジェンダー'],
+      'Nigeria': ['政治的発言', 'ジェンダー'],
+      'Cameroon': ['政治的発言', 'ジェンダー'],
+      'Cambodia': ['政治的発言', 'ジェンダー']
+    };
 
+    function handleCountrySelection(country) {
+      selectedCountry = country;
+      hideWelcomeAndButtons();
+      addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+      showTopicOptions(country);
+    }
 
-function handleCountrySelection(country) {
-  selectedCountry = country;  // 選ばれた国をセット
-  hideWelcomeAndButtons();    // UIの変更
-  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
-
-  // トピック表示用の関数を呼び出す
-  showTopicOptions(country);  
-}
+    function goHome() {
+      selectedCountry = '';
+      coiConceptDisplayed = false;
+      document.getElementById('country-selection').style.display = 'flex';
+      document.getElementById('welcome-message').style.display = 'block';
+      document.getElementById('input-area').style.display = 'none';
+      document.getElementById('chat-container').innerHTML = `
+        <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
+        <div id="country-selection">
+          <button onclick="handleCountrySelection('Uganda')">Uganda ウガンダ</button>
+          <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka スリランカ</button>
+          <button onclick="handleCountrySelection('Nigeria')">Nigeria ナイジェリア</button>
+          <button onclick="handleCountrySelection('Cameroon')">Cameroon カメルーン</button>
+          <button onclick="handleCountrySelection('Cambodia')">Cambodia カンボジア</button>
+          <button id="coi-concept-button">COI（出身国情報）について</button>
+        </div>
+      `;
+      console.log("ホーム画面に戻りました");
+    }
 
     function hideWelcomeAndButtons() {
       document.getElementById('country-selection').style.display = 'none';
@@ -498,88 +513,25 @@ function handleCountrySelection(country) {
       document.getElementById('chat-container').style.paddingBottom = '100px';
     }
 
-  function showTopicOptions(country) {
-  const topicList = topics[country];  // 選択された国に対応するトピックを取得
+    function showTopicOptions(country) {
+      const topicList = topics[country];  // 選択された国に対応するトピックを取得
 
-  if (topicList) {
-    let message = `${country}に関する以下のトピックから選んでください:\n`;
-    topicList.forEach((topic, index) => {
-      message += `${index + 1}. ${topic}\n`;  // トピックを番号付きでリスト表示
-    });
-    addMessageToChat('bot', message);  // チャットにトピックを表示
-  } else {
-    addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
-  }
-}
-function addMessageToChat(sender, message) {
-  // チャットにメッセージを追加する関数の仮想実装
-  console.log(`${sender}: ${message}`);
-}
-
-function openCOIConcept() {
-  if (coiConceptDisplayed) return;
-
-  var button = document.getElementById('coi-concept-button');
-  button.disabled = true;
-  button.textContent = 'Loading...';
-
-  google.script.run
-    .withSuccessHandler(function(result) {
-      console.log('getCOIConceptContent result:', result);  // ログを追加
-      hideWelcomeAndButtons();
-      if (result.success) {
-        displayCOIConceptContent(result);
+      if (topicList) {
+        let message = `${country}に関する以下のトピックから選んでください:\n`;
+        topicList.forEach((topic, index) => {
+          message += `${index + 1}. ${topic}\n`;  // トピックを番号付きでリスト表示
+        });
+        addMessageToChat('bot', message);  // チャットにトピックを表示
       } else {
-        addMessageToChat('bot', result.message);
+        addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
       }
-      coiConceptDisplayed = true;
-      resetCOIConceptButton();
-    })
-    .withFailureHandler(function(error) {
-      console.error('Error in openCOIConcept:', error);
-      addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました: ' + error.message);
-      resetCOIConceptButton();
-    })
-    .getCOIConceptContent();
-}
-
-function displayCOIConceptContent(result) {
-  var chatContainer = document.getElementById('chat-container');
-  var contentContainer = document.createElement('div');
-  contentContainer.className = 'coi-concept-content';
-  contentContainer.innerHTML = `
-    <h2>${result.name}</h2>
-    <p>ファイルサイズ: ${formatFileSize(result.size)}</p>
-    <p>最終更新日: ${result.lastUpdated}</p>
-    <div class="content-options">
-      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
-      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
-    </div>
-    <p class="pdf-notice">PDFの内容はリンクから直接ご覧ください。</p>
-  `;
-  chatContainer.appendChild(contentContainer);
-  
-  // スクロールして新しいコンテンツを表示
-  contentContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' bytes';
-  else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-  else return (bytes / 1048576).toFixed(1) + ' MB';
-}
-
-
-function toggleView(viewType) {
-  document.getElementById('pdf-view').style.display = viewType === 'pdf' ? 'block' : 'none';
-  document.getElementById('text-view').style.display = viewType === 'text' ? 'block' : 'none';
-}
+    }
 
     function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
       var chatContainer = document.getElementById('chat-container');
       var messageElement = document.createElement('div');
       messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-      
+
       var paragraphs = message.split('\n');
       paragraphs.forEach(function(paragraph) {
         var p = document.createElement('p');
@@ -588,7 +540,7 @@ function toggleView(viewType) {
       });
 
       chatContainer.appendChild(messageElement);
-      
+
       if (appendButtons) {
         appendButtonsAfterContent(messageElement);
       }
@@ -626,11 +578,73 @@ function toggleView(viewType) {
       messageElement.appendChild(buttonsContainer);
     }
 
-function resetCOIConceptButton() {
-  var button = document.getElementById('coi-concept-button');
-  button.disabled = false;
-  button.textContent = 'COIの考え方';
-}
+    function resetCOIConceptButton() {
+      var button = document.getElementById('coi-concept-button');
+      button.disabled = false;
+      button.textContent = 'COIの考え方';
+    }
+
+    function openCOIConcept() {
+      if (coiConceptDisplayed) return;
+
+      var button = document.getElementById('coi-concept-button');
+      button.disabled = true;
+      button.textContent = 'Loading...';
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          console.log('getCOIConceptContent result:', result);  // ログを追加
+          hideWelcomeAndButtons();
+          if (result.success) {
+            displayCOIConceptContent(result);
+          } else {
+            addMessageToChat('bot', result.message);
+          }
+          coiConceptDisplayed = true;
+          resetCOIConceptButton();
+        })
+        .withFailureHandler(function(error) {
+          console.error('Error in openCOIConcept:', error);
+          addMessageToChat('bot', 'COIの考え方の取得中にエラーが発生しました: ' + error.message);
+          resetCOIConceptButton();
+        })
+        .getCOIConceptContent();
+    }
+
+    function displayCOIConceptContent(result) {
+      var chatContainer = document.getElementById('chat-container');
+      var contentContainer = document.createElement('div');
+      contentContainer.className = 'coi-concept-content';
+      contentContainer.innerHTML = `
+        <h2>${result.name}</h2>
+        <p>ファイルサイズ: ${formatFileSize(result.size)}</p>
+        <p>最終更新日: ${result.lastUpdated}</p>
+        <div class="content-options">
+          <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+          <a href="${result.url}" class="content-button">PDFをダウンロード</a>
+        </div>
+        <p class="pdf-notice">PDFの内容はリンクから直接ご覧ください。</p>
+      `;
+      chatContainer.appendChild(contentContainer);
+
+      // スクロールして新しいコンテンツを表示
+      contentContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' bytes';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function toggleView(viewType) {
+      var pdfView = document.getElementById('pdf-view');
+      var textView = document.getElementById('text-view');
+      if (pdfView && textView) {
+        pdfView.style.display = viewType === 'pdf' ? 'block' : 'none';
+        textView.style.display = viewType === 'text' ? 'block' : 'none';
+      }
+    }
 
     function sendMessage() {
       var userInput = document.getElementById('user-input');
@@ -669,114 +683,67 @@ function resetCOIConceptButton() {
       driveResults.style.display = driveResults.style.display === 'none' ? 'block' : 'none';
     }
 
- function goHome() {
-    selectedCountry = '';
-    coiConceptDisplayed = false;
-    document.getElementById('country-selection').style.display = 'flex';
-    document.getElementById('welcome-message').style.display = 'block';
-    document.getElementById('input-area').style.display = 'none';
-    document.getElementById('chat-container').innerHTML = `
-      <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
-      <div id="country-selection">
-        <button onclick="handleCountrySelection('Uganda')">Uganda</button>
-        <button onclick="handleCountrySelection('Sri Lanka')">Sri Lanka</button>
-        <button onclick="handleCountrySelection('Nigeria')">Nigeria</button>
-        <button id="coi-concept-button" onclick="openCOIConcept()">COIの考え方</button>
-      </div>
-    `;
-    console.log("ホーム画面に戻りました");
-  }
+    function handleMenuItemClick(event) {
+      event.preventDefault();
+      const targetSection = this.getAttribute('href').substring(1);
+      console.log(`Navigating to ${targetSection}`);
+      toggleHamburgerMenu();
+      // 各セクションに対する処理を追加
+      switch(targetSection) {
+        case 'about-coi-compass':
+          showAboutCOICompass();
+          break;
+        case 'how-to-use':
+          showHowToUse();
+          break;
+        case 'toggle-theme':
+          toggleTheme();
+          break;
+        case 'increase-font-size':
+          increaseFontSize();
+          break;
+      }
+    }
 
-function toggleHamburgerMenu() {
-  const menu = document.getElementById('hamburger-menu');
-  menu.classList.toggle('menu-visible');
-}
+    function showAboutCOICompass() {
+      addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
+    }
 
-function handleMenuItemClick(event) {
-  event.preventDefault();
-  const clickedItem = event.target.getAttribute('href').substring(1);
-  
-  switch(clickedItem) {
-    case 'about-coi-compass':
-      showAboutCOICompass();
-      break;
-    case 'how-to-use':
-      showHowToUse();
-      break;
-    case 'toggle-theme':
-      toggleTheme();
-      break;
-    case 'increase-font-size':
-      increaseFontSize();
-      break;
-    case 'feedback':
-      showFeedbackForm();
-      break;
-  }
-  
-  toggleHamburgerMenu(); // メニューを閉じる
-}
+    function showHowToUse() {
+      addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
+    }
 
-// 各機能の実装（例）
-function showAboutCOICompass() {
-  addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
-}
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+    }
 
-function showHowToUse() {
-  addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
-}
+    function increaseFontSize() {
+      document.body.style.fontSize = parseInt(getComputedStyle(document.body).fontSize) + 2 + 'px';
+    }
 
-function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
-  // ダークテーマのCSSを適用する処理を追加
-}
+    // イベントリスナーの追加（重複を削除）
+    document.querySelectorAll('#hamburger-menu a').forEach(item => {
+      item.addEventListener('click', handleMenuItemClick);
+    });
 
-function increaseFontSize() {
-  document.body.style.fontSize = parseInt(getComputedStyle(document.body).fontSize) + 2 + 'px';
-}
+    // オプション：通知を表示する関数
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.textContent = message;
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.left = '50%';
+      notification.style.transform = 'translateX(-50%)';
+      notification.style.backgroundColor = '#4CAF50';
+      notification.style.color = 'white';
+      notification.style.padding = '10px';
+      notification.style.borderRadius = '5px';
+      notification.style.zIndex = '1000';
+      document.body.appendChild(notification);
 
-function showFeedbackForm() {
-  addMessageToChat('bot', 'フィードバックをお聞かせください。改善のためのご意見をお待ちしております。');
-  // フィードバックフォームを表示する処理を追加
-}
-
-// イベントリスナーの追加
-document.querySelectorAll('#hamburger-menu a').forEach(item => {
-  item.addEventListener('click', handleMenuItemClick);
-});
-
-  // オプション：通知を表示する関数
-  function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.position = 'fixed';
-    notification.style.top = '20px';
-    notification.style.left = '50%';
-    notification.style.transform = 'translateX(-50%)';
-    notification.style.backgroundColor = '#4CAF50';
-    notification.style.color = 'white';
-    notification.style.padding = '10px';
-    notification.style.borderRadius = '5px';
-    notification.style.zIndex = '1000';
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      document.body.removeChild(notification);
-    }, 3000);
-  }
-  
-      function showTopicOptions(country) {
-      const optionsContainer = document.createElement('div');
-      optionsContainer.id = 'topic-options';
-      
-      topics[country].forEach(topic => {
-        const button = document.createElement('button');
-        button.textContent = topic;
-        button.onclick = () => handleTopicSelection(country, topic);
-        optionsContainer.appendChild(button);
-      });
-      
-      document.getElementById('chat-container').appendChild(optionsContainer);
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 3000);
     }
 
     function handleTopicSelection(country, topic) {
@@ -801,38 +768,26 @@ document.querySelectorAll('#hamburger-menu a').forEach(item => {
       addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
     }
 
-document.getElementById('user-input').addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    // IMEの変換確定でないかチェック
-    if (event.isComposing || event.keyCode === 229) {
-      event.preventDefault();
-      return;
-    }
-    
-    // Shiftキーが押されていない場合のみ送信
-    if (!event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
-    }
-  }
-});
+    document.getElementById('user-input').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
 
-function sendMessage() {
-  var userInput = document.getElementById('user-input');
-  var message = userInput.value;
-  if (message.trim() === '') return;
-  addMessageToChat('user', message);
-  userInput.value = '';
-  google.script.run.withSuccessHandler(handleResponse).handleUserInput(selectedCountry, message);
-}
+    // 他の関数は変更なし
 
-// 他の関数は変更なし
     document.getElementById('coi-concept-button').addEventListener('click', function() {
       if (this.disabled || coiConceptDisplayed) return;
       openCOIConcept();
     });
 
-    
-</script>
+    function toggleHamburgerMenu() {
+      const menu = document.getElementById('hamburger-menu');
+      menu.classList.toggle('menu-visible');
+      menu.classList.toggle('menu-hidden');
+    }
+  </script>
 </body>
+
 </html>

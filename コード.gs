@@ -166,7 +166,7 @@ function getCOIConceptContent() {
   try {
     const fileName = "COIの考え方";
     var files = DriveApp.getFilesByName(fileName);
-    
+
     while (files.hasNext()) {
       var file = files.next();
       if (file.getMimeType() === MimeType.PDF) {
@@ -183,7 +183,6 @@ function getCOIConceptContent() {
     }
 
     return {
-      
       success: false,
       message: "COIの考え方のPDFファイルが見つかりませんでした。"
     };
@@ -195,19 +194,20 @@ function getCOIConceptContent() {
     };
   }
 }
+
 function extractTextFromPDF(file) {
   try {
     // PDFファイルの内容を取得
     var pdfContent = file.getBlob().getDataAsString();
-    
+
     // 簡単なテキスト抽出（完全ではありませんが、基本的なテキストは取得できます）
     var extractedText = pdfContent.replace(/\r\n/g, " ").replace(/\s+/g, " ").trim();
-    
+
     // 抽出されたテキストが空か、意味のある内容がない場合
     if (extractedText.length < 100) {
       return "PDFの内容を正確に抽出できませんでした。PDFファイルを直接ご覧ください。";
     }
-    
+
     return extractedText;
   } catch (error) {
     console.error('Error in extractTextFromPDF:', error);
