@@ -267,12 +267,16 @@
       border-bottom: 1px solid #e0e0e0;
     }
 
-    #hamburger-menu nav ul li a {
-      color: #333;
-      text-decoration: none;
-      font-size: 18px;
-    }
+#hamburger-menu nav ul li a {
+  color: #333;
+  text-decoration: none;
+  font-size: 18px;
+  cursor: pointer; /* カーソルがポインターになるように設定 */
+}
 
+#hamburger-menu nav ul li a:hover {
+  text-decoration: underline; /* ホバー時の視覚的フィードバック */
+}
     .pdf-container {
       width: 100%;
       margin-top: 20px;
@@ -725,48 +729,68 @@
       driveResults.style.display = driveResults.style.display === 'none' ? 'block' : 'none';
     }
 
-    function handleMenuItemClick(event) {
-      event.preventDefault();
-      const targetSection = this.getAttribute('href').substring(1);
-      console.log(`Navigating to ${targetSection}`);
-      toggleHamburgerMenu();
-      // 各セクションに対する処理を追加
-      switch (targetSection) {
-        case 'about-coi-compass':
-          showAboutCOICompass();
-          break;
-        case 'how-to-use':
-          showHowToUse();
-          break;
-        case 'toggle-theme':
-          toggleTheme();
-          break;
-        case 'increase-font-size':
-          increaseFontSize();
-          break;
-      }
-    }
+// ハンバーガーメニューの項目クリック時の処理
+function handleMenuItemClick(event) {
+  event.preventDefault();
+  const targetHref = this.getAttribute('href');
+  
+  // 外部リンク（Googleフォーム）の処理
+  if (targetHref.includes('forms.gle')) {
+    window.open(targetHref, '_blank');
+    toggleHamburgerMenu();
+    return;
+  }
 
-    function showAboutCOICompass() {
-      addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
-    }
+  const targetSection = targetHref.substring(1);
+  console.log(`Navigating to ${targetSection}`);
+  toggleHamburgerMenu();
 
-    function showHowToUse() {
-      addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
-    }
+  // 内部リンクの処理
+  switch (targetSection) {
+    case 'about-coi-compass':
+      showAboutCOICompass();
+      break;
+    case 'how-to-use':
+      showHowToUse();
+      break;
+    case 'toggle-theme':
+      toggleTheme();
+      break;
+    case 'increase-font-size':
+      increaseFontSize();
+      break;
+    default:
+      console.warn(`Unknown section: ${targetSection}`);
+  }
+}
 
-    function toggleTheme() {
-      document.body.classList.toggle('dark-theme');
-    }
+// COICompassについての情報を表示
+function showAboutCOICompass() {
+  addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
+}
 
-    function increaseFontSize() {
-      document.body.style.fontSize = parseInt(getComputedStyle(document.body).fontSize) + 2 + 'px';
-    }
+// 使用方法を表示
+function showHowToUse() {
+  addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
+}
 
-    // イベントリスナーの追加（重複を削除）
-    document.querySelectorAll('#hamburger-menu a').forEach(item => {
-      item.addEventListener('click', handleMenuItemClick);
-    });
+// ダークモードとライトモードを切り替え
+function toggleTheme() {
+  document.body.classList.toggle('dark-theme');
+}
+
+// フォントサイズを増加
+function increaseFontSize() {
+  const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+  document.body.style.fontSize = `${currentSize + 2}px`;
+}
+
+// ページ読み込み完了後にイベントリスナーを設定
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#hamburger-menu a').forEach(item => {
+    item.addEventListener('click', handleMenuItemClick);
+  });
+});
 
     // オプション：通知を表示する関数
     function showNotification(message) {
