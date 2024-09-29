@@ -482,41 +482,26 @@
       </ul>
     </nav>
   </div>
-  <div id="chat-container">
-    <div id="welcome-message">ようこそCOICompassへ！<br>調べたい国を選んでください</div>
-    <div id="country-selection">
-      <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
-      <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
-      <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
-      <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
-      <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
-      <button id="coi-concept-button">COI（出身国情報）について</button>
-    </div>
+<div id="chat-container">
+  <div id="country-selection">
+    <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
+    <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
+    <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
+    <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
+    <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
+    <button id="coi-concept-button">COI（出身国情報）について</button>
   </div>
-
-  <div id="input-area">
-    <input type="text" id="user-input" placeholder="質問を入力してください">
-    <button id="send-button">送信</button>
-  </div>
+</div>
+<div id="input-area" style="display: flex;">
+  <input type="text" id="user-input" placeholder="調べたい国や情報のボタンを押してください">
+  <button id="send-button">送信</button>
+</div>
 
   <div id="drive-results"></div>
 
   <script>
     console.log("Script loaded");
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('home-button').addEventListener('click', goHome);
-  document.getElementById('hamburger-button').addEventListener('click', toggleHamburgerMenu);
-  document.getElementById('send-button').addEventListener('click', sendMessage);
-  document.getElementById('coi-concept-button').addEventListener('click', function () {
-    if (this.disabled || coiConceptDisplayed) return;
-    openCOIConcept();
-  });
 
-  document.querySelectorAll('.country-button').forEach(button => {
-    button.addEventListener('click', function () {
-      handleCountrySelection(this.getAttribute('data-country'));
-    });
-  });
 
   document.querySelectorAll('#hamburger-menu a').forEach(item => {
     item.addEventListener('click', handleMenuItemClick);
@@ -528,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
       sendMessage();
     }
   });
-});
+
 
 
     let selectedCountry = '';
@@ -551,12 +536,16 @@ document.addEventListener('DOMContentLoaded', function() {
       openCOIConcept();
     });
 
-    function hideWelcomeAndButtons() {
-  document.getElementById('welcome-message').style.display = 'none';
-  document.getElementById('country-selection').style.display = 'none';
-  document.getElementById('input-area').style.display = 'flex';
+function hideWelcomeAndButtons() {
+  const countrySelection = document.getElementById('country-selection');
+  if (countrySelection) {
+    countrySelection.style.display = 'none';
+  }
+  const inputArea = document.getElementById('input-area');
+  if (inputArea) {
+    inputArea.style.display = 'flex';
+  }
 }
-
     // 国選択ボタンのイベントリスナー
     document.querySelectorAll('.country-button').forEach(button => {
       button.addEventListener('click', function () {
@@ -900,23 +889,44 @@ function toggleHamburgerMenu() {
 
 function goHome() {
   console.log('Executing goHome function');
-  const welcomeMessage = document.getElementById('welcome-message');
+
+  // 国選択ボタンを表示
   const countrySelection = document.getElementById('country-selection');
-  const chatContainer = document.getElementById('chat-container');
+  if (countrySelection) {
+    countrySelection.style.display = 'flex';
+  }
+
+  // チャットコンテナをクリア（オプション：過去のメッセージを保持したい場合は、この行をコメントアウトしてください）
+  // document.getElementById('chat-container').innerHTML = '';
+
+  // 入力エリアを表示し、プレースホルダーを設定
   const inputArea = document.getElementById('input-area');
+  if (inputArea) {
+    inputArea.style.display = 'flex';
+    const userInput = document.getElementById('user-input');
+    if (userInput) {
+      userInput.placeholder = '調べたい国や情報のボタンを押してください';
+    }
+  }
+
+  // トピックオプションがあれば削除
   const topicOptions = document.getElementById('topic-options');
+  if (topicOptions) {
+    topicOptions.remove();
+  }
 
-  if (welcomeMessage) welcomeMessage.style.display = 'block';
-  if (countrySelection) countrySelection.style.display = 'flex';
-  if (chatContainer) chatContainer.innerHTML = '';
-  if (inputArea) inputArea.style.display = 'none';
-  if (topicOptions) topicOptions.remove();
+  // ドライブ結果を非表示
+  const driveResults = document.getElementById('drive-results');
+  if (driveResults) {
+    driveResults.style.display = 'none';
+  }
 
+  // 状態をリセット
   selectedCountry = '';
   coiConceptDisplayed = false;
+
   console.log('goHome function completed');
 }
-  </script>
+</script>
 </body>
-
 </html>
