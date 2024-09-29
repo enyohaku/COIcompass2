@@ -236,6 +236,26 @@
       }
     }
 
+    .welcome-message {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-message h1 {
+      font-size: 36px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .welcome-message p {
+      font-size: 24px;
+      color: #666;
+    }
+
     #hamburger-menu {
       position: fixed;
       top: 120px;
@@ -482,20 +502,24 @@
       </ul>
     </nav>
   </div>
-<div id="chat-container">
-  <div id="country-selection">
-    <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
-    <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
-    <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
-    <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
-    <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
-    <button id="coi-concept-button">COI（出身国情報）について</button>
+  <div id="chat-container">
+    <div id="welcome-message" class="welcome-message">
+      <h1>COICompassへようこそ</h1>
+      <p>調べたい国や情報を選んでください</p>
+    </div>
+    <div id="country-selection">
+      <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
+      <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
+      <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
+      <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
+      <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
+      <button id="coi-concept-button">COI（出身国情報）について</button>
+    </div>
   </div>
-</div>
-<div id="input-area" style="display: flex;">
-  <input type="text" id="user-input" placeholder="調べたい国や情報のボタンを押してください">
-  <button id="send-button">送信</button>
-</div>
+  <div id="input-area" style="display: flex;">
+    <input type="text" id="user-input" placeholder="調べたい国や情報のボタンを押してください">
+    <button id="send-button">送信</button>
+  </div>
 
   <div id="drive-results"></div>
 
@@ -527,14 +551,6 @@
       'Cambodia': ['政治的発言', 'ジェンダー']
     };
 
-    // イベントリスナーの設定
-    document.getElementById('home-button').addEventListener('click', goHome);
-    document.getElementById('hamburger-button').addEventListener('click', toggleHamburgerMenu);
-    document.getElementById('send-button').addEventListener('click', sendMessage);
-    document.getElementById('coi-concept-button').addEventListener('click', function () {
-      if (this.disabled || coiConceptDisplayed) return;
-      openCOIConcept();
-    });
 
 function hideWelcomeAndButtons() {
   const countrySelection = document.getElementById('country-selection');
@@ -546,12 +562,6 @@ function hideWelcomeAndButtons() {
     inputArea.style.display = 'flex';
   }
 }
-    // 国選択ボタンのイベントリスナー
-    document.querySelectorAll('.country-button').forEach(button => {
-      button.addEventListener('click', function () {
-        handleCountrySelection(this.getAttribute('data-country'));
-      });
-    });
 
 function handleCountrySelection(country) {
   console.log('Handling country selection:', country);
@@ -871,13 +881,6 @@ function handleError(error) {
   addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
 }
 
-    // Keydown event for 'user-input'
-    document.getElementById('user-input').addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-      }
-    });
 
 function toggleHamburgerMenu() {
   const menu = document.getElementById('hamburger-menu');
@@ -888,16 +891,19 @@ function toggleHamburgerMenu() {
 }
 
 function goHome() {
-  console.log('Executing goHome function');
+  console.log('goHome function called');
+  
+  // ウェルカムメッセージを表示
+  const welcomeMessage = document.getElementById('welcome-message');
+  if (welcomeMessage) {
+    welcomeMessage.style.display = 'block';
+  }
 
   // 国選択ボタンを表示
   const countrySelection = document.getElementById('country-selection');
   if (countrySelection) {
     countrySelection.style.display = 'flex';
   }
-
-  // チャットコンテナをクリア（オプション：過去のメッセージを保持したい場合は、この行をコメントアウトしてください）
-  // document.getElementById('chat-container').innerHTML = '';
 
   // 入力エリアを表示し、プレースホルダーを設定
   const inputArea = document.getElementById('input-area');
@@ -915,18 +921,51 @@ function goHome() {
     topicOptions.remove();
   }
 
-  // ドライブ結果を非表示
-  const driveResults = document.getElementById('drive-results');
-  if (driveResults) {
-    driveResults.style.display = 'none';
+ selectedCountry = '';
+  coiConceptDisplayed = false;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // イベントリスナーの設定
+  const homeButton = document.getElementById('home-button');
+  if (homeButton) {
+    homeButton.addEventListener('click', goHome);
+    console.log('Home button event listener set');
+  } else {
+    console.error('Home button not found');
+  }
+});
+
+  document.getElementById('hamburger-button').addEventListener('click', toggleHamburgerMenu);
+  document.getElementById('send-button').addEventListener('click', sendMessage);
+  
+  const coiConceptButton = document.getElementById('coi-concept-button');
+  if (coiConceptButton) {
+    coiConceptButton.addEventListener('click', function() {
+      if (this.disabled || coiConceptDisplayed) return;
+      openCOIConcept();
+    });
   }
 
-  // 状態をリセット
-  selectedCountry = '';
-  coiConceptDisplayed = false;
+  // 国選択ボタンのイベントリスナー
+  document.querySelectorAll('.country-button').forEach(button => {
+    button.addEventListener('click', function() {
+      handleCountrySelection(this.getAttribute('data-country'));
+    });
+  });
 
-  console.log('goHome function completed');
-}
-</script>
+  // ハンバーガーメニュー項目のイベントリスナー
+  document.querySelectorAll('#hamburger-menu a').forEach(item => {
+    item.addEventListener('click', handleMenuItemClick);
+  });
+
+  // ユーザー入力のイベントリスナー
+  document.getElementById('user-input').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+  </script>
 </body>
 </html>
