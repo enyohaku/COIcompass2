@@ -7,7 +7,7 @@
   <title>COI Compass</title>
   <base target="_top">
   <style>
-    /* CSSは以前と同じ内容を使用 */
+    /* 全体のリセット */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -20,10 +20,14 @@
       line-height: 1.6;
       color: #333;
       background-color: #f0f0f0;
-      height: 100vh;
-      overflow: hidden;
+      /* height: 100vh;  */ /* 削除 */
+      /* overflow: hidden; */ /* 削除 */
       font-size: 36px;
-      padding-top: 120px;
+      /* padding-top: 120px; */ /* 削除 */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: font-size 0.3s ease;
     }
 
     header {
@@ -56,6 +60,7 @@
       cursor: pointer;
       padding: 10px 15px;
       font-size: 54px;
+      transition: opacity 0.3s ease, transform 0.1s ease;
     }
 
     .home-icon svg {
@@ -72,50 +77,39 @@
       opacity: 0.7;
     }
 
-    #chat-container {
-      height: calc(100vh - 300px);
-      overflow-y: auto;
-      padding: 20px;
-      padding-bottom: 180px;
-      background-color: #f0f0f0;
+    .header-icon:active {
+      transform: scale(0.95);
+    }
+
+    #main-content {
       display: flex;
       flex-direction: column;
-      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      margin-top: 120px; /* headerの高さと合わせる */
+      overflow: hidden;
     }
 
-    .message {
-      max-width: 80%;
-      margin-bottom: 20px;
-      padding: 15px 20px;
-      border-radius: 25px;
-      clear: both;
-      word-wrap: break-word;
-      font-size: 36px;
-      line-height: 1.4;
-    }
-
-    .user-message {
-      background-color: #dcf8c6;
-      align-self: flex-end;
-      border-bottom-right-radius: 10px;
-    }
-
-    .bot-message {
-      background-color: #ffffff;
-      align-self: flex-start;
-      border-bottom-left-radius: 10px;
-    }
-
-    #welcome-message {
+    #welcome-container {
       text-align: center;
       margin: 20px 0;
-      font-size: 44px;
-      font-weight: bold;
-      color: #4a4a4a;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #welcome-message h1 {
+      font-size: 36px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    #welcome-message p {
+      font-size: 24px;
+      color: #666;
     }
 
     #country-selection,
-    #uganda-options,
     #topic-options {
       display: flex;
       flex-direction: column;
@@ -126,7 +120,6 @@
     }
 
     #country-selection button,
-    #uganda-options button,
     #topic-options button {
       width: 100%;
       padding: 20px;
@@ -142,10 +135,48 @@
     }
 
     #country-selection button:hover,
-    #uganda-options button:hover,
     #topic-options button:hover {
       background-color: #45a049;
       transform: scale(1.02);
+    }
+
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: 180px;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      -webkit-overflow-scrolling: touch;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .message {
+      max-width: 80%;
+      margin-bottom: 30px; /* 増加 */
+      padding: 15px 20px;
+      border-radius: 25px;
+      clear: both;
+      word-wrap: break-word;
+      font-size: 36px;
+      line-height: 1.4;
+    }
+
+    .message p {
+      margin: 10px 0; /* 追加: pタグのマージン */
+    }
+
+    .user-message {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 10px;
+    }
+
+    .bot-message {
+      background-color: #ffffff;
+      align-self: flex-start;
+      border-bottom-left-radius: 10px;
     }
 
     #input-area {
@@ -155,12 +186,11 @@
       right: 0;
       background-color: #ffffff;
       padding: 15px;
-      display: flex;
+      display: none; /* 初期状態は非表示 */
       align-items: center;
       box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
       height: 180px;
-      display: none;
-      /* 初期状態は非表示 */
+      z-index: 1000;
     }
 
     #user-input {
@@ -185,6 +215,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    #send-button:hover {
+      background-color: #45a049;
+      transform: scale(1.02);
     }
 
     #drive-results {
@@ -216,6 +252,10 @@
       font-size: 36px;
     }
 
+    #drive-results a:hover {
+      text-decoration: underline;
+    }
+
     #drive-results em {
       font-style: italic;
       color: #666;
@@ -230,30 +270,14 @@
         height: 120px;
       }
 
+      #main-content {
+        margin-top: 120px; /* headerの高さと合わせる */
+      }
+
       #chat-container {
         height: calc(100vh - 230px);
         padding-top: 10px;
       }
-    }
-
-    .welcome-message {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 20px;
-      background-color: #f0f0f0;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .welcome-message h1 {
-      font-size: 36px;
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .welcome-message p {
-      font-size: 24px;
-      color: #666;
     }
 
     #hamburger-menu {
@@ -272,7 +296,6 @@
       right: 0;
     }
 
-    /* 追加: .menu-hidden クラス */
     #hamburger-menu.menu-hidden {
       right: -300px;
     }
@@ -292,12 +315,10 @@
       text-decoration: none;
       font-size: 18px;
       cursor: pointer;
-      /* カーソルがポインターになるように設定 */
     }
 
     #hamburger-menu nav ul li a:hover {
       text-decoration: underline;
-      /* ホバー時の視覚的フィードバック */
     }
 
     .pdf-container {
@@ -309,7 +330,6 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 10px;
     }
 
     .pdf-button {
@@ -320,16 +340,13 @@
       text-decoration: none;
       border-radius: 5px;
       font-size: 16px;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
     }
 
     .pdf-button:hover {
       background-color: #45a049;
-    }
-
-    .pdf-embed {
-      width: 100%;
-      height: 600px;
-      border: 1px solid #ccc;
     }
 
     .viewer-container {
@@ -354,6 +371,7 @@
       font-size: 16px;
       cursor: pointer;
       border: none;
+      transition: background-color 0.3s ease;
     }
 
     .view-button:hover {
@@ -400,6 +418,7 @@
       text-decoration: none;
       border-radius: 5px;
       font-size: 16px;
+      transition: background-color 0.3s ease;
     }
 
     .content-button:hover {
@@ -451,29 +470,14 @@
       color: #f0f0f0;
     }
 
-
-    .pdf-container {
-      margin-top: 20px;
+    /* フォーカススタイル */
+    button:focus {
+      outline: 2px solid #4CAF50;
     }
 
-    .pdf-options {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .pdf-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    .pdf-button:hover {
-      background-color: #45a049;
+    /* 通知スタイル */
+    .notification {
+      transition: opacity 0.5s ease-in-out;
     }
   </style>
 </head>
@@ -482,8 +486,9 @@
   <header>
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
     <div class="header-buttons">
-      <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る" aria-controls="welcome-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
@@ -502,21 +507,31 @@
       </ul>
     </nav>
   </div>
-  <div id="chat-container">
-    <div id="welcome-message" class="welcome-message">
-      <h1>COICompassへようこそ</h1>
-      <p>調べたい国や情報を選んでください</p>
+
+  <!-- メインコンテンツをflexコンテナに配置 -->
+  <div id="main-content">
+    <!-- ウェルカムメッセージと国選択ボタンを独立したコンテナに配置 -->
+    <div id="welcome-container">
+      <div id="welcome-message" class="welcome-message">
+        <h1>COICompassへようこそ</h1>
+        <p>調べたい国や情報を選んでください</p>
+      </div>
+      <div id="country-selection">
+        <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
+        <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
+        <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
+        <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
+        <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
+        <button id="coi-concept-button">COI（出身国情報）について</button>
+      </div>
     </div>
-    <div id="country-selection">
-      <button class="country-button" data-country="Uganda">Uganda ウガンダ</button>
-      <button class="country-button" data-country="Sri Lanka">Sri Lanka スリランカ</button>
-      <button class="country-button" data-country="Nigeria">Nigeria ナイジェリア</button>
-      <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
-      <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
-      <button id="coi-concept-button">COI（出身国情報）について</button>
+
+    <div id="chat-container">
+      <!-- チャットメッセージがここに追加されます -->
     </div>
   </div>
-  <div id="input-area" style="display: flex;">
+
+  <div id="input-area">
     <input type="text" id="user-input" placeholder="調べたい国や情報のボタンを押してください">
     <button id="send-button">送信</button>
   </div>
@@ -525,20 +540,6 @@
 
   <script>
     console.log("Script loaded");
-
-
-  document.querySelectorAll('#hamburger-menu a').forEach(item => {
-    item.addEventListener('click', handleMenuItemClick);
-  });
-
-  document.getElementById('user-input').addEventListener('keydown', function (event) {
-    if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
-    }
-  });
-
-
 
     let selectedCountry = '';
     let coiConceptDisplayed = false;
@@ -551,57 +552,117 @@
       'Cambodia': ['政治的発言', 'ジェンダー']
     };
 
+    // DOMContentLoadedイベント内で全てのイベントリスナーを設定
+    document.addEventListener('DOMContentLoaded', function () {
+      // Homeボタンのイベントリスナー
+      const homeButton = document.getElementById('home-button');
+      if (homeButton) {
+        homeButton.addEventListener('click', goHome);
+        console.log('Home button event listener set');
+      } else {
+        console.error('Home button not found');
+      }
 
-function hideWelcomeAndButtons() {
-  const countrySelection = document.getElementById('country-selection');
-  if (countrySelection) {
-    countrySelection.style.display = 'none';
-  }
-  const inputArea = document.getElementById('input-area');
-  if (inputArea) {
-    inputArea.style.display = 'flex';
-  }
-}
-
-function handleCountrySelection(country) {
-  console.log('Handling country selection:', country);
-  selectedCountry = country;
-  hideWelcomeAndButtons();
-  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
-  showTopicOptions(country);
-}
-
-function showTopicOptions(country) {
-  const topicList = topics[country];
-  if (topicList) {
-    const existingTopicOptions = document.getElementById('topic-options');
-    if (existingTopicOptions) {
-      existingTopicOptions.remove();
-    }
-
-    let topicButtons = document.createElement('div');
-    topicButtons.id = 'topic-options';
-    topicButtons.style.display = 'flex';
-    topicButtons.style.flexDirection = 'column';
-    topicButtons.style.gap = '20px';
-    topicButtons.style.width = '50%';
-    topicButtons.style.margin = '20px auto 0';
-
-    topicList.forEach((topic) => {
-      let button = document.createElement('button');
-      button.textContent = topic;
-      button.className = 'country-button';
-      button.addEventListener('click', function() {
-        handleTopicSelection(country, topic);
+      // ハンバーガーメニューの項目クリック時のイベントリスナー
+      document.querySelectorAll('#hamburger-menu a').forEach(item => {
+        item.addEventListener('click', handleMenuItemClick);
       });
-      topicButtons.appendChild(button);
+
+      // ユーザー入力のイベントリスナー
+      const userInput = document.getElementById('user-input');
+      if (userInput) {
+        userInput.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+          }
+        });
+      }
+
+      // ハンバーガーメニューと送信ボタンのイベントリスナー
+      const hamburgerButton = document.getElementById('hamburger-button');
+      if (hamburgerButton) {
+        hamburgerButton.addEventListener('click', toggleHamburgerMenu);
+      } else {
+        console.error('Hamburger button not found');
+      }
+
+      const sendButton = document.getElementById('send-button');
+      if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+      } else {
+        console.error('Send button not found');
+      }
+
+      // COIコンセプトボタンのイベントリスナー
+      const coiConceptButton = document.getElementById('coi-concept-button');
+      if (coiConceptButton) {
+        coiConceptButton.addEventListener('click', function () {
+          if (this.disabled || coiConceptDisplayed) return;
+          openCOIConcept();
+        });
+      } else {
+        console.error('COI Concept button not found');
+      }
+
+      // 国選択ボタンのイベントリスナー
+      document.querySelectorAll('.country-button').forEach(button => {
+        button.addEventListener('click', function () {
+          handleCountrySelection(this.getAttribute('data-country'));
+        });
+      });
     });
 
-    document.getElementById('chat-container').appendChild(topicButtons);
-  } else {
-    addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
-  }
-}
+    function hideWelcomeAndButtons() {
+      const welcomeContainer = document.getElementById('welcome-container');
+      if (welcomeContainer) {
+        welcomeContainer.style.display = 'none';
+      }
+      const inputArea = document.getElementById('input-area');
+      if (inputArea) {
+        inputArea.style.display = 'flex';
+      }
+    }
+
+    function handleCountrySelection(country) {
+      console.log('Handling country selection:', country);
+      selectedCountry = country;
+      hideWelcomeAndButtons();
+      addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+      showTopicOptions(country);
+    }
+
+    function showTopicOptions(country) {
+      const topicList = topics[country];
+      if (topicList) {
+        const existingTopicOptions = document.getElementById('topic-options');
+        if (existingTopicOptions) {
+          existingTopicOptions.remove();
+        }
+
+        let topicButtons = document.createElement('div');
+        topicButtons.id = 'topic-options';
+        topicButtons.style.display = 'flex';
+        topicButtons.style.flexDirection = 'column';
+        topicButtons.style.gap = '20px';
+        topicButtons.style.width = '50%';
+        topicButtons.style.margin = '20px auto 0';
+
+        topicList.forEach((topic) => {
+          let button = document.createElement('button');
+          button.textContent = topic;
+          button.className = 'country-button';
+          button.addEventListener('click', function () {
+            handleTopicSelection(country, topic);
+          });
+          topicButtons.appendChild(button);
+        });
+
+        document.getElementById('chat-container').appendChild(topicButtons);
+      } else {
+        addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
+      }
+    }
 
     function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
       var chatContainer = document.getElementById('chat-container');
@@ -679,7 +740,7 @@ function showTopicOptions(country) {
       google.script.run
         .withSuccessHandler(function (result) {
           console.log('getCOIConceptContent result:', result);  // ログを追加
-          hideWelcomeAndButtons();
+          // ウェルカムメッセージや国選択ボタンは表示されたまま
           if (result.success) {
             displayCOIConceptContent(result);
           } else {
@@ -731,17 +792,17 @@ function showTopicOptions(country) {
       }
     }
 
-function sendMessage() {
-  var userInput = document.getElementById('user-input');
-  var message = userInput.value;
-  if (message.trim() === '') return;
-  addMessageToChat('user', message);
-  userInput.value = '';
-  google.script.run
-    .withSuccessHandler(handleResponse)
-    .withFailureHandler(handleError)
-    .handleUserInput(selectedCountry, message);
-}
+    function sendMessage() {
+      var userInput = document.getElementById('user-input');
+      var message = userInput.value;
+      if (message.trim() === '') return;
+      addMessageToChat('user', message);
+      userInput.value = '';
+      google.script.run
+        .withSuccessHandler(handleResponse)
+        .withFailureHandler(handleError)
+        .handleUserInput(selectedCountry, message);
+    }
 
     function handleResponse(result) {
       addMessageToChat('bot', result.difyResponse);
@@ -771,67 +832,67 @@ function sendMessage() {
       driveResults.style.display = driveResults.style.display === 'none' ? 'block' : 'none';
     }
 
-// ハンバーガーメニューの項目クリック時の処理
-function handleMenuItemClick(event) {
-  event.preventDefault();
-  const targetHref = this.getAttribute('href');
-  
-  // 外部リンク（Googleフォーム）の処理
-  if (targetHref.includes('forms.gle')) {
-    window.open(targetHref, '_blank');
-    toggleHamburgerMenu();
-    return;
-  }
+    // ハンバーガーメニューの項目クリック時の処理
+    function handleMenuItemClick(event) {
+      event.preventDefault();
+      const targetHref = this.getAttribute('href');
 
-  const targetSection = targetHref.substring(1);
-  console.log(`Navigating to ${targetSection}`);
-  toggleHamburgerMenu();
+      // 外部リンク（Googleフォーム）の処理
+      if (targetHref.includes('forms.gle')) {
+        window.open(targetHref, '_blank');
+        toggleHamburgerMenu();
+        return;
+      }
 
-  // 内部リンクの処理
-  switch (targetSection) {
-    case 'about-coi-compass':
-      showAboutCOICompass();
-      break;
-    case 'how-to-use':
-      showHowToUse();
-      break;
-    case 'toggle-theme':
-      toggleTheme();
-      break;
-    case 'increase-font-size':
-      increaseFontSize();
-      break;
-    default:
-      console.warn(`Unknown section: ${targetSection}`);
-  }
-}
+      const targetSection = targetHref.substring(1);
+      console.log(`Navigating to ${targetSection}`);
+      toggleHamburgerMenu();
 
-// COICompassについての情報を表示
-function showAboutCOICompass() {
-  addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
-}
+      // 内部リンクの処理
+      switch (targetSection) {
+        case 'about-coi-compass':
+          showAboutCOICompass();
+          break;
+        case 'how-to-use':
+          showHowToUse();
+          break;
+        case 'toggle-theme':
+          toggleTheme();
+          break;
+        case 'increase-font-size':
+          increaseFontSize();
+          break;
+        default:
+          console.warn(`Unknown section: ${targetSection}`);
+      }
+    }
 
-// 使用方法を表示
-function showHowToUse() {
-  addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
-}
+    // COICompassについての情報を表示
+    function showAboutCOICompass() {
+      addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
+    }
 
-// ダークモードとライトモードを切り替え
-function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
-}
+    // 使用方法を表示
+    function showHowToUse() {
+      addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
+    }
 
-// フォントサイズを増加
-function increaseFontSize() {
-  const currentSize = parseInt(getComputedStyle(document.body).fontSize);
-  document.body.style.fontSize = `${currentSize + 2}px`;
-}
+    // ダークモードとライトモードを切り替え
+    function toggleTheme() {
+      document.body.classList.toggle('dark-theme');
+    }
 
+    // フォントサイズを増加
+    function increaseFontSize() {
+      const currentSize = parseInt(getComputedStyle(document.body).fontSize);
+      document.body.style.fontSize = `${currentSize + 2}px`;
+    }
 
     // オプション：通知を表示する関数
     function showNotification(message) {
       const notification = document.createElement('div');
       notification.textContent = message;
+      notification.className = 'notification'; // クラス名を追加
       notification.style.position = 'fixed';
       notification.style.top = '20px';
       notification.style.left = '50%';
@@ -841,131 +902,90 @@ function increaseFontSize() {
       notification.style.padding = '10px';
       notification.style.borderRadius = '5px';
       notification.style.zIndex = '1000';
+      notification.style.opacity = '1';
+      notification.style.transition = 'opacity 0.5s ease-in-out';
       document.body.appendChild(notification);
 
       setTimeout(() => {
-        document.body.removeChild(notification);
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 500);
       }, 3000);
     }
 
-function handleTopicSelection(country, topic) {
-  addMessageToChat('user', `${country} - ${topic}`);
-  google.script.run
-    .withSuccessHandler(handleTopicResponse)
-    .withFailureHandler(handleError)
-    .getTopicDocumentContent(`${country} - ${topic}`);
-}
-
-function handleTopicResponse(result) {
-  if (result.success) {
-    if (result.type === 'pdf') {
-      addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
-      addMessageToChat('bot', `
-        <div class="pdf-container">
-          <div class="pdf-options">
-            <a href="${result.webViewLink}" target="_blank" class="pdf-button">Google Driveで開く</a>
-            <a href="${result.url}" class="pdf-button">PDFをダウンロード</a>
-          </div>
-        </div>
-      `);
-    } else {
-      addMessageToChat('bot', result.content);
+    function handleTopicSelection(country, topic) {
+      addMessageToChat('user', `${country} - ${topic}`);
+      google.script.run
+        .withSuccessHandler(handleTopicResponse)
+        .withFailureHandler(handleError)
+        .getTopicDocumentContent(`${country} - ${topic}`);
     }
-  } else {
-    addMessageToChat('bot', result.message);
-  }
-}
 
-function handleError(error) {
-  console.error('Error:', error);
-  addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
-}
-
-
-function toggleHamburgerMenu() {
-  const menu = document.getElementById('hamburger-menu');
-  menu.classList.toggle('menu-visible');
-  setTimeout(() => {
-    menu.classList.toggle('menu-hidden');
-  }, 10); // 小さな遅延を追加してCSSトランジションを確実に開始させる
-}
-
-function goHome() {
-  console.log('goHome function called');
-  
-  // ウェルカムメッセージを表示
-  const welcomeMessage = document.getElementById('welcome-message');
-  if (welcomeMessage) {
-    welcomeMessage.style.display = 'block';
-  }
-
-  // 国選択ボタンを表示
-  const countrySelection = document.getElementById('country-selection');
-  if (countrySelection) {
-    countrySelection.style.display = 'flex';
-  }
-
-  // 入力エリアを表示し、プレースホルダーを設定
-  const inputArea = document.getElementById('input-area');
-  if (inputArea) {
-    inputArea.style.display = 'flex';
-    const userInput = document.getElementById('user-input');
-    if (userInput) {
-      userInput.placeholder = '調べたい国や情報のボタンを押してください';
+    function handleTopicResponse(result) {
+      if (result.success) {
+        if (result.type === 'pdf') {
+          addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
+          addMessageToChat('bot', `
+            <div class="pdf-container">
+              <div class="pdf-options">
+                <a href="${result.webViewLink}" target="_blank" class="pdf-button">Google Driveで開く</a>
+                <a href="${result.url}" class="pdf-button">PDFをダウンロード</a>
+              </div>
+            </div>
+          `);
+        } else {
+          addMessageToChat('bot', result.content);
+        }
+      } else {
+        addMessageToChat('bot', result.message);
+      }
     }
-  }
 
-  // トピックオプションがあれば削除
-  const topicOptions = document.getElementById('topic-options');
-  if (topicOptions) {
-    topicOptions.remove();
-  }
-
- selectedCountry = '';
-  coiConceptDisplayed = false;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  // イベントリスナーの設定
-  const homeButton = document.getElementById('home-button');
-  if (homeButton) {
-    homeButton.addEventListener('click', goHome);
-    console.log('Home button event listener set');
-  } else {
-    console.error('Home button not found');
-  }
-});
-
-  document.getElementById('hamburger-button').addEventListener('click', toggleHamburgerMenu);
-  document.getElementById('send-button').addEventListener('click', sendMessage);
-  
-  const coiConceptButton = document.getElementById('coi-concept-button');
-  if (coiConceptButton) {
-    coiConceptButton.addEventListener('click', function() {
-      if (this.disabled || coiConceptDisplayed) return;
-      openCOIConcept();
-    });
-  }
-
-  // 国選択ボタンのイベントリスナー
-  document.querySelectorAll('.country-button').forEach(button => {
-    button.addEventListener('click', function() {
-      handleCountrySelection(this.getAttribute('data-country'));
-    });
-  });
-
-  // ハンバーガーメニュー項目のイベントリスナー
-  document.querySelectorAll('#hamburger-menu a').forEach(item => {
-    item.addEventListener('click', handleMenuItemClick);
-  });
-
-  // ユーザー入力のイベントリスナー
-  document.getElementById('user-input').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && !event.isComposing && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
+    function handleError(error) {
+      console.error('Error:', error);
+      addMessageToChat('bot', 'エラーが発生しました。もう一度お試しください。');
+      showNotification('エラーが発生しました。');
     }
-  });
+
+    function toggleHamburgerMenu() {
+      const menu = document.getElementById('hamburger-menu');
+      menu.classList.toggle('menu-visible');
+      setTimeout(() => {
+        menu.classList.toggle('menu-hidden');
+      }, 10); // 小さな遅延を追加してCSSトランジションを確実に開始させる
+    }
+
+    function goHome() {
+      console.log('goHome function called');
+
+      // ウェルカムコンテナを再表示
+      const welcomeContainer = document.getElementById('welcome-container');
+      if (welcomeContainer) {
+        welcomeContainer.style.display = 'block';
+      }
+
+      // トピックオプションがあれば削除
+      const topicOptions = document.getElementById('topic-options');
+      if (topicOptions) {
+        topicOptions.remove();
+      }
+
+      // 入力エリアのプレースホルダーをリセット
+      const inputArea = document.getElementById('input-area');
+      if (inputArea) {
+        inputArea.style.display = 'flex';
+        const userInput = document.getElementById('user-input');
+        if (userInput) {
+          userInput.placeholder = '調べたい国や情報のボタンを押してください';
+        }
+      }
+
+      // 選択された国とCOIコンセプト表示フラグをリセット
+      selectedCountry = '';
+      coiConceptDisplayed = false;
+    }
   </script>
 </body>
+
 </html>
