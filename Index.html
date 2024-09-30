@@ -608,7 +608,35 @@
     .notification {
       transition: opacity 0.5s ease-in-out;
     }
-  </style>
+
+    #pdf-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 50%;
+  margin: 1.25rem auto 0;
+}
+
+
+.pdf-button {
+  width: 100%;
+  padding: 1.25rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.938rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  font-size: 1.111rem;
+  font-weight: bold;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.pdf-button:hover {
+  background-color: #45a049;
+  transform: scale(1.02);
+}
+</style>
 </head>
 
 <body>
@@ -815,29 +843,22 @@
     }
 
     function addMessageToChat(sender, message, appendButtons = false, shouldScroll = true) {
-      var chatContainer = document.getElementById('chat-container');
-      var messageElement = document.createElement('div');
-      messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+console.log("addMessageToChat called with sender:", sender, "and message:", message);
+  var chatContainer = document.getElementById('chat-container');
+  var messageElement = document.createElement('div');
+  messageElement.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
 
-      var paragraphs = message.split('\n');
-      paragraphs.forEach(function (paragraph) {
-        var p = document.createElement('p');
-        p.textContent = paragraph;
-        messageElement.appendChild(p);
-      });
+  if (message.trim().startsWith('<')) {
+    console.log("HTML content detected, setting innerHTML");
+    messageElement.innerHTML = message;
+  } else {
+    messageElement.textContent = message;
+  }
 
-      chatContainer.appendChild(messageElement);
-
-      if (appendButtons) {
-        appendButtonsAfterContent(messageElement);
-      }
-
-      if (shouldScroll) {
-        setTimeout(() => {
-          messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }, 100);
-      }
-    }
+  chatContainer.appendChild(messageElement);
+  console.log("Message element added to chat container");
+  messageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
 
     function appendButtonsAfterContent(messageElement) {
       var buttonsContainer = document.createElement('div');
@@ -1080,33 +1101,36 @@
       }, 3000);
     }
 
-    function handleTopicSelection(country, topic) {
-      addMessageToChat('user', `${country} - ${topic}`);
-      google.script.run
-        .withSuccessHandler(handleTopicResponse)
-        .withFailureHandler(handleError)
-        .getTopicDocumentContent(`${country} - ${topic}`);
-    }
+function handleTopicSelection(country, topic) {
+  addMessageToChat('user', `${country} - ${topic}`);
+  google.script.run
+    .withSuccessHandler(handleTopicResponse)
+    .withFailureHandler(handleError)
+    .getTopicDocumentContent(`${country} - ${topic}`);
+}
+function openLink(url) {
+  window.open(url, '_blank');
+}
 
-    function handleTopicResponse(result) {
-      if (result.success) {
-        if (result.type === 'pdf') {
-          addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
-          addMessageToChat('bot', `
-            <div class="pdf-container">
-              <div class="pdf-options">
-                <a href="${result.webViewLink}" target="_blank" class="pdf-button">Google Driveで開く</a>
-                <a href="${result.url}" class="pdf-button">PDFをダウンロード</a>
-              </div>
-            </div>
-          `);
-        } else {
-          addMessageToChat('bot', result.content);
-        }
-      } else {
-        addMessageToChat('bot', result.message);
-      }
+function handleTopicResponse(result) {
+  console.log("handleTopicResponse called with result:", result);
+  if (result.success) {
+    if (result.type === 'pdf') {
+      console.log("PDF found, adding message to chat");
+      addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
+      addMessageToChat('bot', `
+        <div id="pdf-options" style="display: flex; flex-direction: column; gap: 20px; width: 50%; margin: 20px auto 0;">
+          <button onclick="window.open('${result.webViewLink}', '_blank')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">Google Driveで開く</button>
+          <button onclick="window.open('${result.url}', '_blank')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">PDFをダウンロード</button>
+        </div>
+      `);
+    } else {
+      addMessageToChat('bot', result.content);
     }
+  } else {
+    addMessageToChat('bot', result.message);
+  }
+}
 
     function handleError(error) {
       console.error('Error:', error);

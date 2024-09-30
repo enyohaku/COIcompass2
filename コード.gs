@@ -115,29 +115,42 @@ function handleTopicDocument(topic) {
 }
 
 function getTopicDocumentContent(topic) {
-  var fileName = topic.replace('/', ' - '); // 例: "Uganda/政治的発言" を "Uganda - 政治的発言" に変換
+  var fileName = topic; // 例: "Uganda - 政治的発言"
   console.log('Searching for document:', fileName);
   var files = DriveApp.getFilesByName(fileName);
   if (files.hasNext()) {
     var file = files.next();
-    if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
-      var doc = DocumentApp.openById(file.getId());
+    if (file.getMimeType() === MimeType.PDF) {
       return {
         success: true,
-        content: doc.getBody().getText(),
-        message: `${fileName}の内容を取得しました。`
-      };
-    } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
-      return {
-        success: true,
-        content: file.getBlob().getDataAsString(),
-        message: `${fileName}の内容を取得しました。`
+        type: 'pdf',
+        url: file.getDownloadUrl(),
+        webViewLink: file.getUrl(),
+        name: file.getName(),
+        size: file.getSize(),
+        lastUpdated: file.getLastUpdated().toLocaleString()
       };
     } else {
-      return {
-        success: false,
-        message: "ファイルの形式がサポートされていません。"
-      };
+      // PDFでない場合の処理（既存のコードに合わせて）
+      if (file.getMimeType() === MimeType.GOOGLE_DOCS) {
+        var doc = DocumentApp.openById(file.getId());
+        return {
+          success: true,
+          content: doc.getBody().getText(),
+          message: `${fileName}の内容を取得しました。`
+        };
+      } else if (file.getMimeType() === MimeType.PLAIN_TEXT) {
+        return {
+          success: true,
+          content: file.getBlob().getDataAsString(),
+          message: `${fileName}の内容を取得しました。`
+        };
+      } else {
+        return {
+          success: false,
+          message: "ファイルの形式がサポートされていません。"
+        };
+      }
     }
   } else {
     return {
