@@ -802,14 +802,20 @@
       }
     }
 
-    function handleCountrySelection(country) {
-      console.log('Handling country selection:', country);
-      selectedCountry = country;
-      hideWelcomeAndButtons();
-      addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
-      showTopicOptions(country);
-    }
-
+function handleCountrySelection(country) {
+  console.log('Handling country selection:', country);
+  selectedCountry = country;
+  hideWelcomeAndButtons();
+  
+  // チャットコンテナを再表示
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.style.display = 'block';
+  }
+  
+  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
+  showTopicOptions(country);
+}
     function showTopicOptions(country) {
       const topicList = topics[country];
       if (topicList) {
@@ -1120,8 +1126,9 @@ function handleTopicResponse(result) {
       addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
       addMessageToChat('bot', `
         <div id="pdf-options" style="display: flex; flex-direction: column; gap: 20px; width: 50%; margin: 20px auto 0;">
-          <button onclick="window.open('${result.webViewLink}', '_blank')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">Google Driveで開く</button>
-          <button onclick="window.open('${result.url}', '_blank')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">PDFをダウンロード</button>
+          <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
+          <button onclick="openLink('${result.webViewLink}')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">Google Driveで開く</button>
+          <button onclick="openLink('${result.url}')" style="width: 100%; padding: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-size: 18px; font-weight: bold;">PDFをダウンロード</button>
         </div>
       `);
     } else {
@@ -1146,35 +1153,44 @@ function handleTopicResponse(result) {
       }, 10); // 小さな遅延を追加してCSSトランジションを確実に開始させる
     }
 
-    function goHome() {
-      console.log('goHome function called');
+function goHome() {
+  console.log('goHome function called');
 
-      // ウェルカムコンテナを再表示
-      const welcomeContainer = document.getElementById('welcome-container');
-      if (welcomeContainer) {
-        welcomeContainer.style.display = 'block';
-      }
+  // ウェルカムコンテナを再表示
+  const welcomeContainer = document.getElementById('welcome-container');
+  if (welcomeContainer) {
+    welcomeContainer.style.display = 'block';
+    
+    // スムーズにスクロール
+    welcomeContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
-      // トピックオプションがあれば削除
-      const topicOptions = document.getElementById('topic-options');
-      if (topicOptions) {
-        topicOptions.remove();
-      }
+  // トピックオプションを非表示にする（削除せずに）
+  const topicOptions = document.getElementById('topic-options');
+  if (topicOptions) {
+    topicOptions.style.display = 'none';
+  }
 
-      // 入力エリアのプレースホルダーをリセット
-      const inputArea = document.getElementById('input-area');
-      if (inputArea) {
-        inputArea.style.display = 'flex';
-        const userInput = document.getElementById('user-input');
-        if (userInput) {
-          userInput.placeholder = '調べたい国や情報のボタンを押してください';
-        }
-      }
+  // チャットコンテナは保持するが、一時的に非表示にする
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.style.display = 'none';
+  }
 
-      // 選択された国とCOIコンセプト表示フラグをリセット
-      selectedCountry = '';
-      coiConceptDisplayed = false;
+  // 入力エリアを非表示にし、プレースホルダーをリセット
+  const inputArea = document.getElementById('input-area');
+  if (inputArea) {
+    inputArea.style.display = 'none';
+    const userInput = document.getElementById('user-input');
+    if (userInput) {
+      userInput.placeholder = '調べたい国や情報のボタンを押してください';
     }
+  }
+
+  // 選択された国をリセット
+  selectedCountry = '';
+}
+
   </script>
 </body>
 
