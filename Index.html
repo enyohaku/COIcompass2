@@ -15,15 +15,19 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* CSS変数で基準フォントサイズを定義 */
+    :root {
+      --base-font-size: 36px;
+      /* デフォルトは中 */
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.6;
       color: #333;
       background-color: #f0f0f0;
-      /* height: 100vh;  */ /* 削除 */
-      /* overflow: hidden; */ /* 削除 */
-      font-size: 36px;
-      /* padding-top: 120px; */ /* 削除 */
+      font-size: var(--base-font-size);
+      /* 基準フォントサイズを適用 */
       display: flex;
       flex-direction: column;
       min-height: 100vh;
@@ -32,21 +36,25 @@
 
     header {
       background-color: #ffffff;
-      padding: 15px;
+      padding: 0.938rem;
+      /* 15px */
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.125rem 0.313rem rgba(0, 0, 0, 0.1);
+      /* 2px 5px */
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 1000;
-      height: 120px;
+      height: 7.5rem;
+      /* 120px */
     }
 
     .logo {
-      height: 100px;
+      height: 6.25rem;
+      /* 100px */
     }
 
     .header-buttons {
@@ -58,19 +66,22 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 10px 15px;
-      font-size: 54px;
+      padding: 0.625rem 0.938rem;
+      /* 10px 15px */
+      font-size: 3rem;
+      /* 48px */
       transition: opacity 0.3s ease, transform 0.1s ease;
     }
 
     .home-icon svg {
-      width: 54px;
-      height: 54px;
+      width: 3rem;
+      height: 3rem;
       stroke: #000000;
     }
 
     .hamburger-icon {
-      margin-top: -10px;
+      margin-top: -0.625rem;
+      /* -10px */
     }
 
     .header-icon:hover {
@@ -85,27 +96,30 @@
       display: flex;
       flex-direction: column;
       flex: 1;
-      margin-top: 120px; /* headerの高さと合わせる */
+      margin-top: 7.5rem;
+      /* headerの高さと合わせる */
       overflow: hidden;
     }
 
     #welcome-container {
       text-align: center;
-      margin: 20px 0;
-      padding: 20px;
+      margin: 1.25rem 0;
+      /* 20px */
+      padding: 1.25rem;
       background-color: #f0f0f0;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 0.625rem;
+      /* 10px */
+      box-shadow: 0 0.125rem 0.313rem rgba(0, 0, 0, 0.1);
+      /* 2px 5px */
     }
 
     #welcome-message h1 {
-      font-size: 36px;
       color: #333;
-      margin-bottom: 10px;
+      margin-bottom: 0.625rem;
+      /* 10px */
     }
 
     #welcome-message p {
-      font-size: 24px;
       color: #666;
     }
 
@@ -113,25 +127,29 @@
     #topic-options {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 1.25rem;
+      /* 20px */
       width: 50%;
-      margin: 20px auto 0;
-      padding: 0 20px;
+      margin: 1.25rem auto 0;
+      padding: 0 1.25rem;
     }
 
     #country-selection button,
     #topic-options button {
       width: 100%;
-      padding: 20px;
+      padding: 1.25rem;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 15px;
+      border-radius: 0.938rem;
+      /* 15px */
       cursor: pointer;
       transition: background-color 0.3s, transform 0.1s;
-      font-size: 40px;
+      font-size: 1.111rem;
+      /* 20px */
       font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+      /* 4px 8px */
     }
 
     #country-selection button:hover,
@@ -143,8 +161,9 @@
     #chat-container {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
-      padding-bottom: 180px;
+      padding: 1.25rem;
+      padding-bottom: 11.25rem;
+      /* 180px */
       background-color: #f0f0f0;
       display: flex;
       flex-direction: column;
@@ -154,29 +173,34 @@
 
     .message {
       max-width: 80%;
-      margin-bottom: 30px; /* 増加 */
-      padding: 15px 20px;
-      border-radius: 25px;
+      margin-bottom: 1.875rem;
+      /* 30px */
+      padding: 0.938rem 1.25rem;
+      /* 15px 20px */
+      border-radius: 1.563rem;
+      /* 25px */
       clear: both;
       word-wrap: break-word;
-      font-size: 36px;
       line-height: 1.4;
     }
 
     .message p {
-      margin: 10px 0; /* 追加: pタグのマージン */
+      margin: 0.625rem 0;
+      /* 10px */
     }
 
     .user-message {
       background-color: #dcf8c6;
       align-self: flex-end;
-      border-bottom-right-radius: 10px;
+      border-bottom-right-radius: 0.625rem;
+      /* 10px */
     }
 
     .bot-message {
       background-color: #ffffff;
       align-self: flex-start;
-      border-bottom-left-radius: 10px;
+      border-bottom-left-radius: 0.625rem;
+      /* 10px */
     }
 
     #input-area {
@@ -185,33 +209,62 @@
       left: 0;
       right: 0;
       background-color: #ffffff;
-      padding: 15px;
-      display: none; /* 初期状態は非表示 */
+      padding: 0.938rem;
+      /* 15px */
+      display: none;
+      /* 初期状態は非表示 */
       align-items: center;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-      height: 180px;
+      box-shadow: 0 -0.125rem 0.313rem rgba(0, 0, 0, 0.1);
+      /* 2px 5px */
+      height: 11.25rem;
+      /* 180px */
       z-index: 1000;
     }
 
     #user-input {
       flex: 1;
-      padding: 30px 20px;
-      border: 3px solid #000080;
-      border-radius: 40px;
-      font-size: 48px;
+      padding: 1.875rem 1.25rem;
+      /* 30px 20px */
+      border: 0.188rem solid #000080;
+      /* 3px */
+      border-radius: 2.5rem;
+      /* 40px */
       outline: none;
-      margin-right: 10px;
+      margin-right: 0.625rem;
+      /* 10px */
+    }
+
+    /* CSS変数を参照するようにスタイルを変更 */
+    #welcome-message h1,
+    #welcome-message p,
+    .message,
+    #user-input,
+    #country-selection button,
+    #topic-options button,
+    #drive-results,
+    #hamburger-menu nav ul li a {
+      font-size: calc(var(--base-font-size) * 0.75);
+      /* 調整倍率を設定 */
+    }
+
+    #user-input {
+      font-size: calc(var(--base-font-size) * 1.5);
+      /* テキストボックスは大きめ */
     }
 
     #send-button {
-      width: 130px;
-      height: 100px;
+      width: 8.125rem;
+      /* 130px */
+      height: 6.25rem;
+      /* 100px */
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 50px;
+      border-radius: 3.125rem;
+      /* 50px */
       cursor: pointer;
-      font-size: 48px;
+      font-size: 3rem;
+      /* 48px */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -226,30 +279,37 @@
     #drive-results {
       display: none;
       position: fixed;
-      top: 90px;
+      top: 5.625rem;
+      /* 90px */
       left: 0;
       right: 0;
       bottom: 0;
       background-color: #ffffff;
-      padding: 20px;
+      padding: 1.25rem;
+      /* 20px */
       overflow-y: auto;
       z-index: 2000;
-      font-size: 36px;
+      font-size: 1rem;
+      /* 16px */
     }
 
     #drive-results h3 {
-      margin-bottom: 20px;
-      font-size: 40px;
+      margin-bottom: 1.25rem;
+      /* 20px */
+      font-size: 1.125rem;
+      /* 18px */
     }
 
     #drive-results div {
-      margin-bottom: 30px;
+      margin-bottom: 1.875rem;
+      /* 30px */
     }
 
     #drive-results a {
       color: #4CAF50;
       text-decoration: none;
-      font-size: 36px;
+      font-size: 1rem;
+      /* 16px */
     }
 
     #drive-results a:hover {
@@ -263,29 +323,37 @@
 
     @media (max-width: 768px) {
       body {
-        padding-top: 50px;
+        padding-top: 3.125rem;
+        /* 50px */
       }
 
       header {
-        height: 120px;
+        height: 7.5rem;
+        /* 120px */
       }
 
       #main-content {
-        margin-top: 120px; /* headerの高さと合わせる */
+        margin-top: 7.5rem;
+        /* headerの高さと合わせる */
       }
 
       #chat-container {
-        height: calc(100vh - 230px);
-        padding-top: 10px;
+        height: calc(100vh - 14.375rem);
+        /* 100vh - 230px */
+        padding-top: 0.625rem;
+        /* 10px */
       }
     }
 
     #hamburger-menu {
       position: fixed;
-      top: 120px;
-      right: -300px;
-      width: 300px;
-      height: calc(100% - 120px);
+      top: 7.5rem;
+      /* 120px */
+      right: -18.75rem;
+      /* 300px */
+      width: 18.75rem;
+      /* 300px */
+      height: calc(100% - 7.5rem);
       background-color: #f8f8f8;
       transition: right 0.3s ease-in-out;
       overflow-y: auto;
@@ -297,7 +365,8 @@
     }
 
     #hamburger-menu.menu-hidden {
-      right: -300px;
+      right: -18.75rem;
+      /* 300px */
     }
 
     #hamburger-menu nav ul {
@@ -306,40 +375,77 @@
     }
 
     #hamburger-menu nav ul li {
-      padding: 15px;
-      border-bottom: 1px solid #e0e0e0;
+      padding: 0.938rem;
+      /* 15px */
+      border-bottom: 0.063rem solid #e0e0e0;
+      /* 1px */
     }
 
     #hamburger-menu nav ul li a {
       color: #333;
       text-decoration: none;
-      font-size: 18px;
+      font-size: 1.125rem;
+      /* 18px */
       cursor: pointer;
+      display: block;
     }
 
     #hamburger-menu nav ul li a:hover {
       text-decoration: underline;
     }
 
+    /* フォントサイズ変更ボタンのスタイル */
+    .font-size-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+      /* 10px */
+      margin-top: 0.625rem;
+      /* 10px */
+    }
+
+    .font-size-button {
+      padding: 0.625rem;
+      /* 10px */
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 0.313rem;
+      /* 5px */
+      cursor: pointer;
+      font-size: 1rem;
+      /* 16px */
+      transition: background-color 0.3s ease;
+    }
+
+    .font-size-button:hover {
+      background-color: #45a049;
+    }
+
     .pdf-container {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 1.25rem;
+      /* 20px */
     }
 
     .pdf-options {
       display: flex;
       justify-content: center;
-      gap: 10px;
+      gap: 0.625rem;
+      /* 10px */
     }
 
     .pdf-button {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 0.625rem 1.25rem;
+      /* 10px 20px */
       background-color: #4CAF50;
       color: white;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 0.313rem;
+      /* 5px */
+      font-size: 1rem;
+      /* 16px */
       cursor: pointer;
       border: none;
       transition: background-color 0.3s ease;
@@ -351,24 +457,30 @@
 
     .viewer-container {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 1.25rem;
+      /* 20px */
     }
 
     .view-options {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 0.625rem;
+      /* 10px */
+      margin-bottom: 0.625rem;
+      /* 10px */
     }
 
     .view-button {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 0.625rem 1.25rem;
+      /* 10px 20px */
       background-color: #4CAF50;
       color: white;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 0.313rem;
+      /* 5px */
+      font-size: 1rem;
+      /* 16px */
       cursor: pointer;
       border: none;
       transition: background-color 0.3s ease;
@@ -380,44 +492,59 @@
 
     .view-content {
       width: 100%;
-      height: 600px;
-      border: 1px solid #ccc;
+      height: 37.5rem;
+      /* 600px */
+      border: 0.063rem solid #ccc;
+      /* 1px */
       overflow-y: auto;
     }
 
     .text-content {
-      padding: 20px;
-      font-size: 16px;
+      padding: 1.25rem;
+      /* 20px */
+      font-size: 1rem;
+      /* 16px */
       line-height: 1.6;
     }
 
     .coi-concept-content {
       background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 0.625rem;
+      /* 10px */
+      padding: 1.25rem;
+      /* 20px */
+      margin-top: 1.25rem;
+      /* 20px */
+      box-shadow: 0 0.125rem 0.313rem rgba(0, 0, 0, 0.1);
+      /* 2px 5px */
     }
 
     .coi-concept-content h2 {
-      font-size: 24px;
-      margin-bottom: 15px;
+      font-size: 1.5rem;
+      /* 24px */
+      margin-bottom: 0.938rem;
+      /* 15px */
     }
 
     .content-options {
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 0.625rem;
+      /* 10px */
+      margin-bottom: 0.938rem;
+      /* 15px */
     }
 
     .content-button {
       display: inline-block;
-      padding: 10px 15px;
+      padding: 0.625rem 0.938rem;
+      /* 10px 15px */
       background-color: #4CAF50;
       color: white;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 0.313rem;
+      /* 5px */
+      font-size: 1rem;
+      /* 16px */
       transition: background-color 0.3s ease;
     }
 
@@ -426,7 +553,8 @@
     }
 
     .pdf-notice {
-      margin-top: 15px;
+      margin-top: 0.938rem;
+      /* 15px */
       font-style: italic;
       color: #666;
     }
@@ -472,7 +600,8 @@
 
     /* フォーカススタイル */
     button:focus {
-      outline: 2px solid #4CAF50;
+      outline: 0.125rem solid #4CAF50;
+      /* 2px */
     }
 
     /* 通知スタイル */
@@ -483,6 +612,8 @@
 </head>
 
 <body>
+  <!-- class="font-medium" を削除 -->
+
   <header>
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
     <div class="header-buttons">
@@ -501,8 +632,14 @@
       <ul>
         <li><a href="#about-coi-compass">COICompassとは</a></li>
         <li><a href="#how-to-use">使い方</a></li>
-        <li><a href="#toggle-theme">テーマ切り替え</a></li>
-        <li><a href="#increase-font-size">表示文字を大きくする</a></li>
+        <li>
+          <a href="#font-size">表示文字のサイズ</a>
+          <div class="font-size-buttons">
+            <button class="font-size-button" id="font-size-small">小</button>
+            <button class="font-size-button" id="font-size-medium">中</button>
+            <button class="font-size-button" id="font-size-large">大</button>
+          </div>
+        </li>
         <li><a href="https://forms.gle/2rVipVMNrXmdoZk6A" target="_blank">利用者アンケート</a></li>
       </ul>
     </nav>
@@ -566,6 +703,19 @@
       // ハンバーガーメニューの項目クリック時のイベントリスナー
       document.querySelectorAll('#hamburger-menu a').forEach(item => {
         item.addEventListener('click', handleMenuItemClick);
+      });
+
+      // フォントサイズボタンのイベントリスナー
+      document.getElementById('font-size-small').addEventListener('click', function () {
+        setFontSize('small');
+      });
+
+      document.getElementById('font-size-medium').addEventListener('click', function () {
+        setFontSize('medium');
+      });
+
+      document.getElementById('font-size-large').addEventListener('click', function () {
+        setFontSize('large');
       });
 
       // ユーザー入力のイベントリスナー
@@ -644,9 +794,9 @@
         topicButtons.id = 'topic-options';
         topicButtons.style.display = 'flex';
         topicButtons.style.flexDirection = 'column';
-        topicButtons.style.gap = '20px';
+        topicButtons.style.gap = '1.25rem'; /* 20px */
         topicButtons.style.width = '50%';
-        topicButtons.style.margin = '20px auto 0';
+        topicButtons.style.margin = '1.25rem auto 0';
 
         topicList.forEach((topic) => {
           let button = document.createElement('button');
@@ -694,9 +844,9 @@
       buttonsContainer.className = 'country-selection'; // クラス名に変更
       buttonsContainer.style.display = 'flex';
       buttonsContainer.style.flexDirection = 'column';
-      buttonsContainer.style.gap = '20px';
+      buttonsContainer.style.gap = '1.25rem'; /* 20px */
       buttonsContainer.style.width = '50%';
-      buttonsContainer.style.margin = '20px auto 0';
+      buttonsContainer.style.margin = '1.25rem auto 0';
 
       var countries = ['Uganda', 'Sri Lanka', 'Nigeria'];
       countries.forEach(function (country) {
@@ -859,12 +1009,34 @@
         case 'toggle-theme':
           toggleTheme();
           break;
-        case 'increase-font-size':
-          increaseFontSize();
+        case 'font-size':
+          // フォントサイズ選択はボタンから行うため不要
           break;
         default:
           console.warn(`Unknown section: ${targetSection}`);
       }
+    }
+
+    // フォントサイズを設定する関数
+    function setFontSize(size) {
+      const root = document.documentElement;
+      // CSS変数を更新
+      switch (size) {
+        case 'small':
+          root.style.setProperty('--base-font-size', '24px');
+          break;
+        case 'medium':
+          root.style.setProperty('--base-font-size', '36px');
+          break;
+        case 'large':
+          root.style.setProperty('--base-font-size', '48px');
+          break;
+        default:
+          root.style.setProperty('--base-font-size', '36px');
+      }
+
+      // 通知を表示
+      showNotification(`文字サイズを${size === 'small' ? '小' : size === 'medium' ? '中' : '大'}に設定しました。`);
     }
 
     // COICompassについての情報を表示
@@ -882,25 +1054,19 @@
       document.body.classList.toggle('dark-theme');
     }
 
-    // フォントサイズを増加
-    function increaseFontSize() {
-      const currentSize = parseInt(getComputedStyle(document.body).fontSize);
-      document.body.style.fontSize = `${currentSize + 2}px`;
-    }
-
     // オプション：通知を表示する関数
     function showNotification(message) {
       const notification = document.createElement('div');
       notification.textContent = message;
       notification.className = 'notification'; // クラス名を追加
       notification.style.position = 'fixed';
-      notification.style.top = '20px';
+      notification.style.top = '1.25rem'; /* 20px */
       notification.style.left = '50%';
       notification.style.transform = 'translateX(-50%)';
       notification.style.backgroundColor = '#4CAF50';
       notification.style.color = 'white';
-      notification.style.padding = '10px';
-      notification.style.borderRadius = '5px';
+      notification.style.padding = '0.625rem'; /* 10px */
+      notification.style.borderRadius = '0.313rem'; /* 5px */
       notification.style.zIndex = '1000';
       notification.style.opacity = '1';
       notification.style.transition = 'opacity 0.5s ease-in-out';
