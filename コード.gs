@@ -57,7 +57,16 @@ function processUserMessage(country, message, conversationId, userId) {
   };
 }
 
-function queryDify(userMessage, conversationId, userId) {
+// グローバル変数として、`conversationId` を定義
+var conversationId = null;  // 初期値は null とする
+var userId = 'user123';     // 任意のユーザーIDを指定（ユーザーごとに変更可能）
+
+// グローバル変数を定義
+var conversationId = null;  // 初期値を null にする
+var userId = 'user123';     // 任意のユーザーIDを指定
+
+// Dify APIにクエリを送信する関数
+function queryDify(userMessage) {
   console.log('DIFY_API_BASE_URL:', DIFY_API_BASE_URL);
   console.log('DIFY_AGENT_API_KEY:', DIFY_AGENT_API_KEY);
 
@@ -71,21 +80,30 @@ function queryDify(userMessage, conversationId, userId) {
       'Authorization': 'Bearer ' + DIFY_AGENT_API_KEY
     },
     'payload': JSON.stringify({
-      'inputs': {},
-      'query': userMessage,
-      'user': userId || 'default_user',
-      'conversation_id': conversationId || null
+      'inputs': {}, // 必要に応じて設定
+      'query': userMessage, // ユーザーからのメッセージ
+      'user': userId || 'default_user', // `userId` を使用
+      'conversation_id': conversationId || null // 前回の `conversationId` を使用
     }),
     'muteHttpExceptions': true
   };
   console.log('Dify API request options:', JSON.stringify(options));
+
   try {
     var response = UrlFetchApp.fetch(apiUrl, options);
     console.log('Dify API response status:', response.getResponseCode());
     console.log('Dify API response headers:', JSON.stringify(response.getAllHeaders()));
     console.log('Dify API response content:', response.getContentText());
 
-    return JSON.parse(response.getContentText());
+    var responseData = JSON.parse(response.getContentText());
+    
+    // レスポンスに `conversation_id` が含まれている場合は更新する
+    if (responseData.conversation_id) {
+      conversationId = responseData.conversation_id;
+      console.log('Updated conversation_id:', conversationId);
+    }
+
+    return responseData;  // 正常な返り値を返す
   } catch (e) {
     console.error('Error in Dify API request:', e.toString());
     if (e.message) {
@@ -96,9 +114,13 @@ function queryDify(userMessage, conversationId, userId) {
       console.error('Error response headers:', JSON.stringify(e.response.getAllHeaders()));
       console.error('Error response content:', e.response.getContentText());
     }
-    return { error: 'リクエストの処理中にエラーが発生しました: ' + e.message };
+    return { error: 'リクエストの処理中にエラーが発生しました: ' + e.message };  // エラー発生時の返り値
   }
 }
+
+// queryDify 関数を呼び出してテストする（例）
+var result = queryDify('こんにちは、あなたの名前は？');
+console.log(result);
 
 function handleUserInput(country, message, conversationId, userId) {
   console.log('Handling user input:', { country, message, conversationId, userId });
@@ -178,11 +200,23 @@ function setDifyApiConfig(apiBaseUrl, apiKey) {
 function getCOIConceptContent() {
   try {
     const fileName = "COIの考え方";
+    console.log("Searching for file:", fileName);
     var files = DriveApp.getFilesByName(fileName);
-
+    
+    if (!files.hasNext()) {
+      console.log("No files found with the name:", fileName);
+      return {
+        success: false,
+        message: `"${fileName}" というファイルが見つかりませんでした。`
+      };
+    }
+    
     while (files.hasNext()) {
       var file = files.next();
+      console.log("File found:", file.getName(), "MimeType:", file.getMimeType());
+      
       if (file.getMimeType() === MimeType.PDF) {
+        console.log("PDF file found, returning data");
         return {
           success: true,
           type: 'pdf',
@@ -194,10 +228,11 @@ function getCOIConceptContent() {
         };
       }
     }
-
+    
+    console.log("No PDF file found with the name:", fileName);
     return {
       success: false,
-      message: "COIの考え方のPDFファイルが見つかりませんでした。"
+      message: `"${fileName}" というPDFファイルが見つかりませんでした。`
     };
   } catch (error) {
     console.error('Error in getCOIConceptContent:', error);
@@ -207,7 +242,6 @@ function getCOIConceptContent() {
     };
   }
 }
-
 function extractTextFromPDF(file) {
   try {
     // PDFファイルの内容を取得
