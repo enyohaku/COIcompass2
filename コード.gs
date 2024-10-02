@@ -9,9 +9,20 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
+// データフォルダを取得する関数を追加
+function getDataFolder() {
+  var folders = DriveApp.getFoldersByName("COICompass_DATA");
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    throw new Error('フォルダ "COICompass_DATA" が見つかりませんでした。');
+  }
+}
+
 function searchGoogleDrive(query) {
   console.log('Searching Google Drive for query:', query);
-  var files = DriveApp.searchFiles('fullText contains "' + query + '"');
+  var folderId = getDataFolder().getId();
+  var files = DriveApp.searchFiles(`fullText contains "${query}" and "${folderId}" in parents`);
   var results = [];
   while (files.hasNext()) {
     var file = files.next();
@@ -61,10 +72,7 @@ function processUserMessage(country, message, conversationId, userId) {
 var conversationId = null;  // 初期値は null とする
 var userId = 'user123';     // 任意のユーザーIDを指定（ユーザーごとに変更可能）
 
-// グローバル変数を定義
-var conversationId = null;  // 初期値を null にする
-var userId = 'user123';     // 任意のユーザーIDを指定
-
+// Dify APIにクエリを送信する関数
 // Dify APIにクエリを送信する関数
 function queryDify(userMessage) {
   console.log('DIFY_API_BASE_URL:', DIFY_API_BASE_URL);
@@ -73,18 +81,24 @@ function queryDify(userMessage) {
   var apiUrl = DIFY_API_BASE_URL + '/chat-messages';
   console.log('Using Dify API URL:', apiUrl);
 
+  // ペイロードをDifyの設定と一致させる
+  var payload = {
+    'inputs': {},
+    'query': userMessage,                       // ユーザーからのメッセージ
+    'user': userId || 'default_user',           // ユーザーIDを使用
+    'conversation_id': conversationId || null,  // 前回の会話IDを使用
+    'temperature': 0,                           // 温度設定
+    'top_p': 1,                                 // トップP設定
+    'max_tokens': 512                           // 最大トークン数
+  };
+
   var options = {
     'method': 'post',
     'headers': {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + DIFY_AGENT_API_KEY
     },
-    'payload': JSON.stringify({
-      'inputs': {}, // 必要に応じて設定
-      'query': userMessage, // ユーザーからのメッセージ
-      'user': userId || 'default_user', // `userId` を使用
-      'conversation_id': conversationId || null // 前回の `conversationId` を使用
-    }),
+    'payload': JSON.stringify(payload),
     'muteHttpExceptions': true
   };
   console.log('Dify API request options:', JSON.stringify(options));
@@ -96,7 +110,7 @@ function queryDify(userMessage) {
     console.log('Dify API response content:', response.getContentText());
 
     var responseData = JSON.parse(response.getContentText());
-    
+
     // レスポンスに `conversation_id` が含まれている場合は更新する
     if (responseData.conversation_id) {
       conversationId = responseData.conversation_id;
@@ -118,18 +132,6 @@ function queryDify(userMessage) {
   }
 }
 
-// queryDify 関数を呼び出してテストする（例）
-var result = queryDify('こんにちは、あなたの名前は？');
-console.log(result);
-
-function handleUserInput(country, message, conversationId, userId) {
-  console.log('Handling user input:', { country, message, conversationId, userId });
-  if (message.includes('/')) {
-    return handleTopicDocument(message);
-  }
-  return processUserMessage(country, message, conversationId, userId);
-}
-
 function handleTopicDocument(topic) {
   console.log('Handling topic document:', topic);
   var result = getTopicDocumentContent(topic);
@@ -139,7 +141,8 @@ function handleTopicDocument(topic) {
 function getTopicDocumentContent(topic) {
   var fileName = topic; // 例: "Uganda - 政治的発言"
   console.log('Searching for document:', fileName);
-  var files = DriveApp.getFilesByName(fileName);
+  var folder = getDataFolder();
+  var files = folder.getFilesByName(fileName);
   if (files.hasNext()) {
     var file = files.next();
     if (file.getMimeType() === MimeType.PDF) {
@@ -201,7 +204,8 @@ function getCOIConceptContent() {
   try {
     const fileName = "COIの考え方";
     console.log("Searching for file:", fileName);
-    var files = DriveApp.getFilesByName(fileName);
+    var folder = getDataFolder();
+    var files = folder.getFilesByName(fileName);
     
     if (!files.hasNext()) {
       console.log("No files found with the name:", fileName);
@@ -242,6 +246,7 @@ function getCOIConceptContent() {
     };
   }
 }
+
 function extractTextFromPDF(file) {
   try {
     // PDFファイルの内容を取得
@@ -262,9 +267,20 @@ function extractTextFromPDF(file) {
   }
 }
 
+// グローバルスコープで関数を定義
+function handleUserInput(country, message, conversationId, userId) {
+  console.log('Handling user input:', { country, message, conversationId, userId });
+  if (message.includes('/')) {
+    return handleTopicDocument(message);
+  }
+  return processUserMessage(country, message, conversationId, userId);
+}
+
+
 // 以下は元のコードにあった追加の関数です
 function openGoogleDriveFolder(folderName) {
-  var folders = DriveApp.getFoldersByName(folderName);
+  var dataFolder = getDataFolder();
+  var folders = dataFolder.getFoldersByName(folderName);
   if (folders.hasNext()) {
     var folder = folders.next();
     var folderUrl = folder.getUrl();

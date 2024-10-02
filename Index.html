@@ -527,32 +527,44 @@
       /* 15px */
     }
 
-    .content-options {
-      display: flex;
-      gap: 0.625rem;
-      /* 10px */
-      margin-bottom: 0.938rem;
-      /* 15px */
-    }
+.content-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* ボタン間のスペースを追加 */
+    margin-bottom: 1rem;
+    width: 100%; /* 幅を100%に設定 */
+    max-width: 500px; /* 最大幅を設定 */
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-    .content-button {
-      display: inline-block;
-      padding: 0.625rem 0.938rem;
-      /* 10px 15px */
-      background-color: #4CAF50;
-      color: white;
-      text-decoration: none;
-      border-radius: 0.313rem;
-      /* 5px */
-      font-size: 1rem;
-      /* 16px */
-      transition: background-color 0.3s ease;
-    }
+  .content-button {
+    display: inline-block;
+    width: 100%;
+    padding: 1.5rem 1rem; /* 上下のパディングを増やして高さを調整 */
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.938rem;
+    font-size: 1.25rem; /* フォントサイズを大きく */
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+  }
 
-    .content-button:hover {
-      background-color: #45a049;
-    }
+  .content-button:hover {
+    background-color: #45a049;
+    transform: scale(1.02);
+  }
 
+  /* 最終更新日のスタイルを追加 */
+  .update-date {
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
     .pdf-notice {
       margin-top: 0.938rem;
       /* 15px */
@@ -1071,35 +1083,11 @@ function handleMenuItemClick(event) {
     }
 
 function handleTopicSelection(country, topic) {
-  const selectionMessage = `${country} - ${topic}`;
-  
-  // トピック選択メッセージを追加
-  addMessageToChat('user', selectionMessage, false, false);
-  
-  // トピックオプションを非表示にする
-  const topicOptions = document.getElementById('topic-options');
-  if (topicOptions) {
-    topicOptions.style.display = 'none';
-  }
-  
-  // 選択結果の表示用要素を作成
-  const resultElement = document.createElement('div');
-  resultElement.className = 'selection-result';
-  resultElement.textContent = 'Loading...'; // ローディング表示
-  
-  // チャットコンテナに結果要素を追加
-  const chatContainer = document.getElementById('chat-container');
-  chatContainer.appendChild(resultElement);
-  
-  // スクロールして新しい要素を表示
-  resultElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
+  addMessageToChat('user', `${country} - ${topic}`);
   google.script.run
-    .withSuccessHandler(function(result) {
-      handleTopicResponse(result, resultElement);
-    })
+    .withSuccessHandler(handleTopicResponse)
     .withFailureHandler(handleError)
-    .getTopicDocumentContent(selectionMessage);
+    .getTopicDocumentContent(`${country} - ${topic}`);
 }
 
 
@@ -1208,19 +1196,15 @@ function resetCOIConceptButton() {
     }
 
 function displayCOIConceptContent(result) {
-      var chatContainer = document.getElementById('chat-container');
-      var contentContainer = document.createElement('div');
-      contentContainer.className = 'coi-concept-content';
-      contentContainer.innerHTML = `
-        <h2>${result.name}</h2>
-        <p>ファイルサイズ: ${formatFileSize(result.size)}</p>
-        <p>最終更新日: ${result.lastUpdated}</p>
-        <div class="content-options">
-          <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
-          <a href="${result.url}" class="content-button">PDFをダウンロード</a>
-        </div>
-        <p class="pdf-notice">PDFの内容はリンクから直接ご覧ください。</p>
-      `;
+  console.log("COI Concept content found, adding message to chat");
+  addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
+  addMessageToChat('bot', `
+    <div class="content-options">
+      <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
+      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
+    </div>
+  `);
       chatContainer.appendChild(contentContainer);
 
       // スクロールして新しいコンテンツを表示
@@ -1264,22 +1248,24 @@ function openLink(url) {
   window.open(url, '_blank');
 }
 
-function handleTopicResponse(result, resultElement) {
+function handleTopicResponse(result) {
+  console.log("handleTopicResponse called with result:", result);
   if (result.success) {
     if (result.type === 'pdf') {
-      resultElement.innerHTML = `
-        <p>${result.name}のPDFが見つかりました。</p>
-        <div id="pdf-options">
+      console.log("PDF found, adding message to chat");
+      addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
+      addMessageToChat('bot', `
+        <div class="content-options">
           <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
-          <button onclick="openLink('${result.webViewLink}')" class="pdf-button">Google Driveで開く</button>
-          <button onclick="openLink('${result.url}')" class="pdf-button">PDFをダウンロード</button>
+          <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+          <a href="${result.url}" class="content-button">PDFをダウンロード</a>
         </div>
-      `;
+      `);
     } else {
-      resultElement.textContent = result.content;
+      addMessageToChat('bot', result.content);
     }
   } else {
-    resultElement.textContent = result.message;
+    addMessageToChat('bot', result.message);
   }
 }
 
