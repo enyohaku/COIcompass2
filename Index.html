@@ -690,12 +690,43 @@
     background-color: #f0f0f0;
     border-radius: 0.625rem;
   }
+
+  #loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 
 </style>
 </head>
 
 <body>
+  <div id="loading-indicator" style="display: none;">
+  <div class="spinner"></div>
+  <p>返答を生成中...</p>
+</div>
   <!-- class="font-medium" を削除 -->
 
   <header>
@@ -1227,16 +1258,23 @@ function toggleView(viewType) {
     }
 
 function sendMessage() {
-      var userInput = document.getElementById('user-input');
-      var message = userInput.value;
-      if (message.trim() === '') return;
-      addMessageToChat('user', message);
-      userInput.value = '';
-      google.script.run
-        .withSuccessHandler(handleResponse)
-        .withFailureHandler(handleError)
-        .handleUserInput(selectedCountry, message);
-    }
+  var userInput = document.getElementById('user-input');
+  var message = userInput.value;
+  if (message.trim() === '') return;
+  addMessageToChat('user', message);
+  userInput.value = '';
+  showLoading(); // ローディングインジケーターを表示
+  google.script.run
+    .withSuccessHandler(function(result) {
+      hideLoading(); // ローディングインジケーターを非表示
+      handleResponse(result);
+    })
+    .withFailureHandler(function(error) {
+      hideLoading(); // エラー時もローディングインジケーターを非表示
+      handleError(error);
+    })
+    .handleUserInput(selectedCountry, message);
+}
 
 function handleResponse(result) {
       addMessageToChat('bot', result.difyResponse);
@@ -1294,7 +1332,13 @@ function displayResponse(response) {
   
   chatContainer.appendChild(messageElement);
 }
+function showLoading() {
+  document.getElementById('loading-indicator').style.display = 'block';
+}
 
+function hideLoading() {
+  document.getElementById('loading-indicator').style.display = 'none';
+}
   </script>
 </body>
 
