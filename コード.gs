@@ -60,19 +60,33 @@ function processUserMessage(country, message, conversationId, userId) {
   var difyResponse = queryDify(message, conversationId, userId);
   var driveResults = searchGoogleDrive(message);
 
-  console.log('Processed user message, Dify response:', difyResponse);
+  // Difyの応答を整形して改行を追加
+  var formattedResponse = formatResponse(difyResponse.answer || difyResponse.error || "応答がありませんでした。");
+
+  console.log('Processed user message, Dify response:', formattedResponse);
   return {
     userMessage: message,
-    difyResponse: difyResponse.answer || difyResponse.error || "応答がありませんでした。",
+    difyResponse: formattedResponse,
     driveResults: driveResults
   };
+}
+
+// Difyからの応答を読みやすく整形する関数
+function formatResponse(response) {
+  if (!response) return "";
+
+  // 段落として改行を `<br><br>` で表現
+  var paragraphs = response.split('\n').map(function(paragraph) {
+    return `<p>${paragraph.trim()}</p>`;  // `<p>` タグを使用して段落を作成
+  });
+
+  return paragraphs.join('');  // 複数の段落を結合してHTMLとして返す
 }
 
 // グローバル変数として、`conversationId` を定義
 var conversationId = null;  // 初期値は null とする
 var userId = 'user123';     // 任意のユーザーIDを指定（ユーザーごとに変更可能）
 
-// Dify APIにクエリを送信する関数
 // Dify APIにクエリを送信する関数
 function queryDify(userMessage) {
   console.log('DIFY_API_BASE_URL:', DIFY_API_BASE_URL);

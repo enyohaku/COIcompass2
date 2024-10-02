@@ -1282,6 +1282,18 @@ function handleTopicResponse(result) {
         menu.classList.toggle('menu-hidden');
       }, 10); // 小さな遅延を追加してCSSトランジションを確実に開始させる
     }
+ 
+  // 返答を表示するHTMLの要素を取得して設定する例
+function displayResponse(response) {
+  var chatContainer = document.getElementById('chat-container');  // 返答を表示する要素を指定
+  var messageElement = document.createElement('div');
+  messageElement.classList.add('bot-response');
+  
+  // 返答をHTMLとして設定する
+  messageElement.innerHTML = response;
+  
+  chatContainer.appendChild(messageElement);
+}
 
   </script>
 </body>
