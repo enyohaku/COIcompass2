@@ -306,6 +306,52 @@ function handleUserInput(country, message, conversationId, userId) {
   return processUserMessage(country, message, conversationId, userId);
 }
 
+function getBeforeInterviewContent() {
+  try {
+    const fileName = "面談の前に";
+    console.log("Searching for file:", fileName);
+    var folder = getDataFolder();
+    var files = folder.getFilesByName(fileName);
+    
+    if (!files.hasNext()) {
+      console.log("No files found with the name:", fileName);
+      return {
+        success: false,
+        message: `"${fileName}" というファイルが見つかりませんでした。`
+      };
+    }
+    
+    while (files.hasNext()) {
+      var file = files.next();
+      console.log("File found:", file.getName(), "MimeType:", file.getMimeType());
+      
+      if (file.getMimeType() === MimeType.PDF) {
+        console.log("PDF file found, returning data");
+        return {
+          success: true,
+          type: 'pdf',
+          url: file.getDownloadUrl(),
+          webViewLink: file.getUrl(),
+          name: file.getName(),
+          size: file.getSize(),
+          lastUpdated: file.getLastUpdated().toLocaleString()
+        };
+      }
+    }
+    
+    console.log("No PDF file found with the name:", fileName);
+    return {
+      success: false,
+      message: `"${fileName}" というPDFファイルが見つかりませんでした。`
+    };
+  } catch (error) {
+    console.error('Error in getBeforeInterviewContent:', error);
+    return {
+      success: false,
+      message: "エラーが発生しました: " + error.toString()
+    };
+  }
+}
 
 // 以下は元のコードにあった追加の関数です
 function openGoogleDriveFolder(folderName) {

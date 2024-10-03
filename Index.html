@@ -52,6 +52,55 @@
       /* 120px */
     }
 
+    .header-icon {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.625rem 0.938rem;
+      font-size: 3rem;
+      transition: opacity 0.3s ease, transform 0.1s ease;
+    }
+
+    .home-icon svg,
+    .trash-icon svg {
+      width: 3rem;
+      height: 3rem;
+      stroke: #000000;
+    }
+
+    .header-icon:hover {
+      opacity: 0.7;
+    }
+
+    .header-icon:active {
+      transform: scale(0.95);
+    }
+
+    /* ツールチップスタイル */
+    .header-icon::after {
+      content: attr(aria-label);
+      position: absolute;
+      bottom: -2.5rem;
+      /* ボタンの下に配置 */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .header-icon:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
     .logo {
       height: 6.25rem;
       /* 100px */
@@ -344,6 +393,21 @@
         padding-top: 0.625rem;
         /* 10px */
       }
+    }
+
+    /* ゴミ箱ボタンのスタイルを追加 */
+    .trash-icon svg {
+      width: 3rem;
+      height: 3rem;
+      stroke: #000000;
+    }
+
+    /* ヘッダーボタンのレイアウトを調整 */
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      /* ボタン間の間隔を調整 */
     }
 
     #hamburger-menu {
@@ -786,14 +850,24 @@
   <header>
     <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
     <div class="header-buttons">
-      <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る" aria-controls="welcome-container">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      </button>
-      <button id="hamburger-button" class="header-icon hamburger-icon" aria-label="メニューを開く">☰</button>
+<button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+  </svg>
+</button>
+ <button id="clear-history-button" class="header-icon trash-icon" aria-label="履歴を消去">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+    <line x1="10" y1="11" x2="10" y2="17"></line>
+    <line x1="14" y1="11" x2="14" y2="17"></line>
+  </svg>
+ <button id="hamburger-button" class="header-icon hamburger-icon" aria-label="メニューを開く">☰</button>
+    </div>
+    </button>
     </div>
   </header>
   <div id="hamburger-menu" class="menu-hidden">
@@ -829,6 +903,7 @@
         <button class="country-button" data-country="Cameroon">Cameroon カメルーン</button>
         <button class="country-button" data-country="Cambodia">Cambodia カンボジア</button>
         <button id="coi-concept-button">COIの考え方</button>
+        <button id="before-interview-button">面談の前に</button>
       </div>
     </div>
 
@@ -844,21 +919,14 @@
 
   <div id="drive-results"></div>
 
- <script>
-/**
- * COI Compass アプリケーションのメインJavaScriptファイル (前半)
- * 
- * このスクリプトは、COI Compassウェブアプリケーションの主要な機能を制御します。
- * 国の選択、トピックの表示、チャットインターフェース、
- * ハンバーガーメニュー、フォントサイズの変更など、
- * ユーザーインターフェースとインタラクションの管理を行います。
- */
-
-// グローバル変数
+  <script>
 let isCOIConceptProcessing = false;
 let selectedCountry = '';
 let coiConceptDisplayed = false;
 let autoHideTimer;
+let isBeforeInterviewProcessing = false;
+let beforeInterviewDisplayed = false;
+
 
 const topics = {
   'Uganda': ['基本情報', '政治的発言', 'ジェンダー'],
@@ -884,13 +952,19 @@ function setupEventListeners() {
   setupSendButton();
   setupCountryButtons();
   setupHamburgerMenuEvents();
+  setupClearHistoryButton();
+  setupBeforeInterviewButton();
+  
 }
 
 // 各種セットアップ関数
 function setupHomeButton() {
   const homeButton = document.getElementById('home-button');
   if (homeButton) {
-    homeButton.addEventListener('click', goHome);
+    homeButton.addEventListener('click', function() {
+      resetLoadingState();
+      goHome();
+    });
   } else {
     console.error('Home button not found');
   }
@@ -1016,6 +1090,46 @@ function handleMenuItemClick(event) {
   }
 }
 
+function setupClearHistoryButton() {
+  const clearHistoryButton = document.getElementById('clear-history-button');
+  if (clearHistoryButton) {
+    clearHistoryButton.addEventListener('click', clearHistory);
+  } else {
+    console.error('Clear history button not found');
+  }
+}
+
+function clearHistory() {
+  console.log('Clearing history...');
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.innerHTML = '';
+    addMessageToChat('bot', '履歴が消去されました。');
+  }
+  
+
+  selectedCountry = '';
+  
+  const userInput = document.getElementById('user-input');
+  if (userInput) {
+    userInput.value = '';
+    userInput.placeholder = '調べたい国や情報のボタンを押してください';
+  }
+  
+  showNotification('履歴が消去されました。');
+
+  // ウェルカムコンテナを表示し、入力エリアを非表示にする
+  const welcomeContainer = document.getElementById('welcome-container');
+  if (welcomeContainer) {
+    welcomeContainer.style.display = 'block';
+  }
+
+  const inputArea = document.getElementById('input-area');
+  if (inputArea) {
+    inputArea.style.display = 'none';
+  }
+}
+
 // COI関連の関数
 function setupCOIConceptButton() {
   const coiConceptButton = document.getElementById('coi-concept-button');
@@ -1037,6 +1151,7 @@ function openCOIConcept() {
   if (isCOIConceptProcessing || coiConceptDisplayed) return;
 
   isCOIConceptProcessing = true;
+  coiConceptDisplayed = false;
   
   var button = document.getElementById('coi-concept-button');
   if (!button) {
@@ -1075,9 +1190,105 @@ function openCOIConcept() {
     .getCOIConceptContent();
 }
 
+function setupBeforeInterviewButton() {
+  const beforeInterviewButton = document.getElementById('before-interview-button');
+  if (beforeInterviewButton) {
+    beforeInterviewButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      if (!isBeforeInterviewProcessing) {
+        openBeforeInterview();
+      }
+    });
+  } else {
+    console.error("Before Interview button not found");
+  }
+}
+function openBeforeInterview() {
+  console.log('openBeforeInterview function called'); // デバッグログを追加
+
+  // 毎回処理を実行できるようにフラグをリセット
+ if (isBeforeInterviewProcessing) return;
+
+  isBeforeInterviewProcessing = true;
+  beforeInterviewDisplayed = false;
+
+  
+  var button = document.getElementById('before-interview-button');
+  if (!button) {
+    console.error("Before Interview button not found");
+    isBeforeInterviewProcessing = false;
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Loading...';
+
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.innerHTML = '';
+    chatContainer.style.display = 'block';
+  }
+
+google.script.run
+    .withSuccessHandler(function (result) {
+      console.log('getBeforeInterviewContent result:', result);
+      if (result.success) {
+        displayBeforeInterviewContent(result);
+      } else {
+        addMessageToChat('bot', result.message);
+        resetLoadingState(); // エラーの場合もリセット
+      }
+      beforeInterviewDisplayed = true;
+      isBeforeInterviewProcessing = false;
+    })
+    .withFailureHandler(function (error) {
+      console.error('Error in openBeforeInterview:', error);
+      addMessageToChat('bot', '面談の前にの取得中にエラーが発生しました: ' + error.message);
+      resetLoadingState(); // エラーの場合もリセット
+      isBeforeInterviewProcessing = false;
+      beforeInterviewDisplayed = false;
+    })
+    .getBeforeInterviewContent();
+}
+
+function displayBeforeInterviewContent(result) {
+  console.log("Before Interview content found, adding message to chat");
+  addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
+  addMessageToChat('bot', `
+    <div class="content-options">
+      <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
+      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
+      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
+    </div>
+  `);
+  
+  // コンテンツ表示後にローディング状態をリセット
+  resetLoadingState();
+}
+
+function resetLoadingState() {
+  // すべてのボタンのLoading状態を解除
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(button => {
+    button.disabled = false;
+    if (button.id === 'coi-concept-button') {
+      button.textContent = 'COIの考え方';
+    } else if (button.id === 'before-interview-button') {
+      button.textContent = '面談の前に';
+    }
+  });
+
+  // Loading インジケーターを非表示にする
+  hideLoading();
+}
+
+
 // その他の機能関数
 function goHome() {
   console.log('goHome function called');
+
+  // Loading状態をリセット
+  resetLoadingState();
 
   const welcomeContainer = document.getElementById('welcome-container');
   if (welcomeContainer) {
@@ -1107,59 +1318,8 @@ function goHome() {
   selectedCountry = '';
   coiConceptDisplayed = false;
   isCOIConceptProcessing = false;
-}
-
-function handleCountrySelection(country) {
-  console.log('Handling country selection:', country);
-  selectedCountry = country;
-  hideWelcomeAndButtons();
-  
-  const chatContainer = document.getElementById('chat-container');
-  if (chatContainer) {
-    chatContainer.style.display = 'block';
-  }
-  
-  addMessageToChat('bot', `${country}について知りたいことを選んでください。`);
-  showTopicOptions(country);
-}
-
-function hideWelcomeAndButtons() {
-  const welcomeContainer = document.getElementById('welcome-container');
-  if (welcomeContainer) {
-    welcomeContainer.style.display = 'none';
-  }
-  const inputArea = document.getElementById('input-area');
-  if (inputArea) {
-    inputArea.style.display = 'flex';
-  }
-}
-
-function showTopicOptions(country) {
-  const topicList = topics[country];
-  if (topicList) {
-    const existingTopicOptions = document.getElementById('topic-options');
-    if (existingTopicOptions) {
-      existingTopicOptions.remove();
-    }
-
-    let topicButtons = document.createElement('div');
-    topicButtons.id = 'topic-options';
-    topicButtons.className = 'topic-options-container';
-
-    topicList.forEach((topic) => {
-      let button = document.createElement('button');
-      button.textContent = topic;
-      button.className = 'country-button';
-      button.addEventListener('click', function () {
-        handleTopicSelection(country, topic);
-      });
-      topicButtons.appendChild(button);
-    });
-
-    document.getElementById('chat-container').appendChild(topicButtons);
-  } else {
-    addMessageToChat('bot', 'この国に関するトピックはまだ登録されていません。');
-  }
+  isBeforeInterviewProcessing = false;
+  beforeInterviewDisplayed = false;
 }
 
 function handleTopicSelection(country, topic) {
@@ -1354,13 +1514,15 @@ function showNotification(message) {
   notification.style.top = '1.25rem';
   notification.style.left = '50%';
   notification.style.transform = 'translateX(-50%)';
-  notification.style.backgroundColor = '#4CAF50';
-  notification.style.color = 'white';
+  notification.style.backgroundColor = '#ffffff'; // 背景色を白に変更
+  notification.style.color = '#000000'; // 文字色を黒に設定
   notification.style.padding = '0.625rem';
   notification.style.borderRadius = '0.313rem';
   notification.style.zIndex = '1000';
   notification.style.opacity = '1';
   notification.style.transition = 'opacity 0.5s ease-in-out';
+  notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)'; // シャドウを追加して目立たせる
+  notification.style.border = '1px solid #cccccc'; // ボーダーを追加
   document.body.appendChild(notification);
 
   setTimeout(() => {
@@ -1384,7 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupEventListeners();
 });
 
-</script>
+  </script>
 
 </body>
 
