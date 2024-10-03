@@ -71,16 +71,32 @@ function processUserMessage(country, message, conversationId, userId) {
   };
 }
 
-// Difyからの応答を読みやすく整形する関数
 function formatResponse(response) {
   if (!response) return "";
 
-  // 段落として改行を `<br><br>` で表現
+  // URLを検出してリンクに変換する正規表現
+  var urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  // 許可されたドメインのリスト
+  var allowedDomains = ['www.state.gov', 'www.amnesty.org'];
+
+  // URLをリンクに変換する関数
+  function replaceURLWithHTMLLinks(text) {
+    return text.replace(urlRegex, function(url) {
+      var domain = new URL(url).hostname;
+      if (allowedDomains.includes(domain)) {
+        return '<a href="' + url + '" target="_blank">' + url + '</a>';
+      }
+      return url; // 許可されていないドメインの場合はリンクにしない
+    });
+  }
+
+  // 段落として改行を `<br><br>` で表現し、URLをリンクに変換
   var paragraphs = response.split('\n').map(function(paragraph) {
-    return `<p>${paragraph.trim()}</p>`;  // `<p>` タグを使用して段落を作成
+    return `<p>${replaceURLWithHTMLLinks(paragraph.trim())}</p>`;
   });
 
-  return paragraphs.join('');  // 複数の段落を結合してHTMLとして返す
+  return paragraphs.join('');
 }
 
 // グローバル変数として、`conversationId` を定義
