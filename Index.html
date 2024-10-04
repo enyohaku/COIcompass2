@@ -1134,9 +1134,7 @@ function clearHistory() {
 function setupCOIConceptButton() {
   const coiConceptButton = document.getElementById('coi-concept-button');
   if (coiConceptButton) {
-    coiConceptButton.replaceWith(coiConceptButton.cloneNode(true));
-    const newCoiConceptButton = document.getElementById('coi-concept-button');
-    newCoiConceptButton.addEventListener('click', function(event) {
+    coiConceptButton.addEventListener('click', function(event) {
       event.preventDefault();
       if (!isCOIConceptProcessing) {
         openCOIConcept();
@@ -1146,6 +1144,7 @@ function setupCOIConceptButton() {
     console.error("COI Concept button not found");
   }
 }
+
 
 function openCOIConcept() {
   if (isCOIConceptProcessing || coiConceptDisplayed) return;
@@ -1322,11 +1321,67 @@ function goHome() {
   beforeInterviewDisplayed = false;
 }
 
+
+// 国選択時の処理
+function handleCountrySelection(country) {
+  console.log('Selected country:', country);
+  selectedCountry = country;
+  
+  const welcomeContainer = document.getElementById('welcome-container');
+  if (welcomeContainer) {
+    welcomeContainer.style.display = 'none';
+  }
+
+  const chatContainer = document.getElementById('chat-container');
+  if (chatContainer) {
+    chatContainer.innerHTML = '';
+    chatContainer.style.display = 'block';
+  }
+
+  const inputArea = document.getElementById('input-area');
+  if (inputArea) {
+    inputArea.style.display = 'flex';
+  }
+
+  addMessageToChat('bot', `${country}が選択されました。以下のトピックから選択してください：`);
+  displayTopicOptions(country);
+}
+
+function displayTopicOptions(country) {
+  const topicOptions = topics[country];
+  if (topicOptions) {
+    const topicContainer = document.createElement('div');
+    topicContainer.className = 'topic-options-container';
+    topicOptions.forEach(topic => {
+      const button = document.createElement('button');
+      button.textContent = topic;
+      button.className = 'content-button';
+      button.addEventListener('click', () => {
+        console.log(`Topic selected: ${topic}`); // デバッグログを追加
+        handleTopicSelection(country, topic);
+      });
+      topicContainer.appendChild(button);
+    });
+    addMessageToChat('bot', topicContainer.outerHTML);
+  }
+}
+
+
+
+
 function handleTopicSelection(country, topic) {
+  console.log(`Selected topic for ${country}: ${topic}`);
   addMessageToChat('user', `${country} - ${topic}`);
+  showLoading();
   google.script.run
-    .withSuccessHandler(handleTopicResponse)
-    .withFailureHandler(handleError)
+    .withSuccessHandler(function(result) {
+      hideLoading();
+      handleTopicResponse(result);
+    })
+    .withFailureHandler(function(error) {
+      hideLoading();
+      handleError(error);
+    })
     .getTopicDocumentContent(`${country} - ${topic}`);
 }
 
@@ -1360,6 +1415,17 @@ function addMessageToChat(sender, message, appendButtons = false, shouldScroll =
   if (message.trim().startsWith('<')) {
     console.log("HTML content detected, setting innerHTML");
     messageElement.innerHTML = message;
+
+    // **追加：messageElement内のすべてのボタンに対してイベントリスナーを設定**
+    const buttons = messageElement.querySelectorAll('button');
+    buttons.forEach(button => {
+      if (button.textContent === '基本情報' || button.textContent === '政治的発言' || button.textContent === 'ジェンダー') {
+        button.addEventListener('click', function() {
+          handleTopicSelection(selectedCountry, button.textContent);
+        });
+      }
+    });
+
   } else {
     messageElement.textContent = message;
   }

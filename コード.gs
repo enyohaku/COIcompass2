@@ -169,7 +169,7 @@ function handleTopicDocument(topic) {
 }
 
 function getTopicDocumentContent(topic) {
-  var fileName = topic; // 例: "Uganda - 政治的発言"
+  var fileName = topic + '.pdf'; // ファイル名に'.pdf'を追加
   console.log('Searching for document:', fileName);
   var folder = getDataFolder();
   var files = folder.getFilesByName(fileName);
