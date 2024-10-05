@@ -706,45 +706,6 @@
       color: #666;
     }
 
-    /* .dark-theme {
-      background-color: #333;
-      color: #f0f0f0;
-    }
-
-    .dark-theme .message {
-      background-color: #444;
-    }
-
-    .dark-theme .user-message {
-      background-color: #2a5d2a;
-    }
-
-    .dark-theme .bot-message {
-      background-color: #444;
-    }
-
-    .dark-theme #input-area {
-      background-color: #222;
-    }
-
-    .dark-theme #user-input {
-      background-color: #444;
-      color: #f0f0f0;
-      border-color: #666;
-    }
-
-    .dark-theme #send-button {
-      background-color: #4CAF50;
-    }
-
-    .dark-theme #hamburger-menu {
-      background-color: #222;
-    }
-
-    .dark-theme #hamburger-menu nav ul li a {
-      color: #f0f0f0;
-    } */
-
     /* フォーカススタイル */
     button:focus {
       outline: 0.125rem solid #4CAF50;
@@ -1616,7 +1577,7 @@ function showAboutCOICompass() {
 }
 
 function showHowToUse() {
-  addMessageToChat('bot', 'COICompassの使い方：1.すぐに利用できるよう、登録、ログイン機能はありません。2024年10月5日時点で、日本で難民申請者が多い５カ国の情報を主に収集し情報提供しています。その他の国は順次、増やしていきます。まずは調べたい国か、情報（COIの考え方、面談の前に）を選んでください 2.国や情報のボタンを押すと、事前に情報をまとめたファイルを閲覧、保存できます。3.国や情報のボタンを押すと、最下段に入力欄が現れます。これは、COI情報に特化したチャットボットです。公正で裏付けが確かな情報を基に回答しますので、ぜひ質問してください。（例　Uganda　宗教　迫害、などと入力すると、ウガンダの法律は同性愛を犯罪として扱い、一部の宗教団体はLGBTに対する否定的な見解を強調している等の情報が得られます。文章ではなく単語で入力してください）4.最後に利用者のアンケートの記入をお願いします。みなさんの声を受けてよりアプリへと改善していきます。');
+  addMessageToChat('bot', 'COICompassの使い方：1.すぐに利用できるよう、登録、ログイン機能はありません。2024年10月5日時点で、日本で難民申請者が多い５カ国の情報を主に収集し情報提供しています。その他の国は順次、増やしていきます。まずは調べたい国か、情報（COIの考え方、面談の前に）を選んでください 2.国や情報のボタンを押すと、事前に情報をまとめたファイルを閲覧、保存できます。3.国や情報のボタンを押すと、最下段に入力欄が現れます。これは、COI情報に特化したチャットボットです。公正で裏付けが確かな情報を基に回答します。（例　Uganda　宗教　迫害、などと入力すると、ウガンダの法律は同性愛を犯罪として扱い、一部の宗教団体はLGBTに対する否定的な見解を強調している等の情報が得られます。文章ではなく単語での入力を推奨します）4.最後に利用者のアンケートの記入をお願いします。みなさんの声を受けてより良いアプリへと改善していきます。');
 }
 
 function showNotification(message) {
@@ -1658,7 +1619,6 @@ function hideLoading() {
 document.addEventListener('DOMContentLoaded', function() {
   setupEventListeners();
 });
-
  </script>
 
 </body>
