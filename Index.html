@@ -835,9 +835,8 @@
         transform: rotate(360deg);
       }
     }
-  </style>
 
-  </style>
+</style>
 </head>
 
 <body>
@@ -848,7 +847,7 @@
   <!-- class="font-medium" を削除 -->
 
   <header>
-    <img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">
+<img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">  <div class="header-buttons">
     <div class="header-buttons">
 <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1252,16 +1251,19 @@ google.script.run
 
 function displayBeforeInterviewContent(result) {
   console.log("Before Interview content found, adding message to chat");
-  addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
   addMessageToChat('bot', `
     <div class="content-options">
       <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
-      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
-      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
+      <a href="${result.webViewLink}" class="content-button" target="_blank" rel="noopener noreferrer">Google Driveで開く</a>
+      <a href="${result.url}" class="content-button" target="_blank" rel="noopener noreferrer">PDFをダウンロード</a>
+      <button class="content-button" id="back-button">アプリに戻る</button>
     </div>
   `);
-  
-  // コンテンツ表示後にローディング状態をリセット
+
+  // 戻るボタンのイベントリスナーを追加
+  document.getElementById('back-button').addEventListener('click', () => {
+    goHome();  // アプリの初期画面に戻る
+  });
   resetLoadingState();
 }
 
@@ -1483,14 +1485,20 @@ function resetCOIConceptButton() {
 
 function displayCOIConceptContent(result) {
   console.log("COI Concept content found, adding message to chat");
-  addMessageToChat('bot', `${result.name}のPDFが見つかりました。`);
   addMessageToChat('bot', `
     <div class="content-options">
       <p style="text-align: center; font-style: italic;">最終更新日: ${result.lastUpdated}</p>
-      <a href="${result.webViewLink}" target="_blank" class="content-button">Google Driveで開く</a>
-      <a href="${result.url}" class="content-button">PDFをダウンロード</a>
+      <a href="${result.webViewLink}" class="content-button" target="_blank" rel="noopener noreferrer">Google Driveで開く</a>
+      <a href="${result.url}" class="content-button" target="_blank" rel="noopener noreferrer">PDFをダウンロード</a>
+      <button class="content-button" id="back-button">アプリに戻る</button>
     </div>
   `);
+
+  // 戻るボタンのイベントリスナーを追加
+  document.getElementById('back-button').addEventListener('click', () => {
+    goHome();  // アプリの初期画面に戻る
+  });
+  resetLoadingState();
 }
 
 function sendMessage() {
