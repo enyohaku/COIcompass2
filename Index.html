@@ -24,7 +24,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.6;
-      color: #333;
+      color: #223670;
       background-color: #f0f0f0;
       font-size: var(--base-font-size);
       /* 基準フォントサイズを適用 */
@@ -106,6 +106,22 @@
       /* 100px */
     }
 
+.logo-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  color: #223670;           /* テキストとアイコンの色を設定 */
+  margin: 0;
+  display: flex;         /* フレックスボックスを使用 */
+  align-items: center;   /* 垂直方向の中央揃え */
+}
+
+.logo-text svg {
+  margin-right: 10px;    /* アイコンとテキストの間にスペースを追加 */
+  width: 36px;           /* アイコンの幅 */
+  height: 36px;          /* アイコンの高さ */
+}
+
     .header-buttons {
       display: flex;
       align-items: flex-start;
@@ -163,7 +179,22 @@
     }
 
     #welcome-message h1 {
-      color: #333;
+      color: .logo-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  color: #223670;           /* テキストとアイコンの色を設定 */
+  margin: 0;
+  display: flex;         /* フレックスボックスを使用 */
+  align-items: center;   /* 垂直方向の中央揃え */
+}
+
+.logo-text svg {
+  margin-right: 10px;    /* アイコンとテキストの間にスペースを追加 */
+  width: 36px;           /* アイコンの幅 */
+  height: 36px;          /* アイコンの高さ */
+}
+;
       margin-bottom: 0.625rem;
       /* 10px */
     }
@@ -480,7 +511,7 @@
     }
 
     #hamburger-menu nav ul li a {
-      color: #333;
+      color: #223670;
       text-decoration: none;
       font-size: 1.125rem;
       /* 18px */
@@ -675,7 +706,7 @@
       color: #666;
     }
 
-    .dark-theme {
+    /* .dark-theme {
       background-color: #333;
       color: #f0f0f0;
     }
@@ -712,7 +743,7 @@
 
     .dark-theme #hamburger-menu nav ul li a {
       color: #f0f0f0;
-    }
+    } */
 
     /* フォーカススタイル */
     button:focus {
@@ -842,12 +873,20 @@
 <body>
   <div id="loading-indicator" style="display: none;">
     <div class="spinner"></div>
-    <p>返答を生成中...</p>
+    <p>回答を生成中...</p>
   </div>
-  <!-- class="font-medium" を削除 -->
 
   <header>
-<img src="https://drive.google.com/thumbnail?id=19IfUqFyOOBJ5_GNGsBmaXDXEw4I2Njhr" alt="COI Compass Logo" class="logo">  <div class="header-buttons">
+
+  <h1 class="logo-text">
+    <svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" 
+     viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+  <g>
+    <circle fill="currentColor" cx="32" cy="32" r="4"/>
+    <path fill="currentColor" d="M32,0C14.328,0,0,14.328,0,32s14.328,32,32,32s32-14.328,32-32S49.672,0,32,0z M40,40l-22,6l6-22l22-6 L40,40z"/>
+  </g>
+</svg>COI COMPASS</h1>
     <div class="header-buttons">
 <button id="home-button" class="header-icon home-icon" aria-label="ホームに戻る">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -872,7 +911,7 @@
   <div id="hamburger-menu" class="menu-hidden">
     <nav>
       <ul>
-        <li><a href="#about-coi-compass">COICompassとは</a></li>
+        <li><a href="#about-coi-compass">COICOMPASSとは</a></li>
         <li><a href="#how-to-use">使い方</a></li>
         <li>
           <a href="#font-size">表示文字のサイズ</a>
@@ -892,7 +931,7 @@
     <!-- ウェルカムメッセージと国選択ボタンを独立したコンテナに配置 -->
     <div id="welcome-container">
       <div id="welcome-message" class="welcome-message">
-        <h1>COICompassへようこそ</h1>
+        <h1>COI COMPASSへようこそ</h1>
         <p>調べたい国や情報を選んでください</p>
       </div>
       <div id="country-selection">
@@ -912,7 +951,7 @@
   </div>
 
   <div id="input-area">
-    <input type="text" id="user-input" placeholder="調べたい国や情報のボタンを押してください">
+    <input type="text" id="user-input" placeholder="調べたい情報を単語で入力">
     <button id="send-button">送信</button>
   </div>
 
@@ -1112,7 +1151,7 @@ function clearHistory() {
   const userInput = document.getElementById('user-input');
   if (userInput) {
     userInput.value = '';
-    userInput.placeholder = '調べたい国や情報のボタンを押してください';
+    userInput.placeholder = '調べたい情報を単語で入力';
   }
   
   showNotification('履歴が消去されました。');
@@ -1312,7 +1351,7 @@ function goHome() {
     inputArea.style.display = 'none';
     const userInput = document.getElementById('user-input');
     if (userInput) {
-      userInput.placeholder = '各国情報を確認してから質問しましょう';
+      userInput.placeholder = '調べたい情報を単語で入力';
     }
   }
 
@@ -1573,11 +1612,11 @@ function setFontSize(size) {
 }
 
 function showAboutCOICompass() {
-  addMessageToChat('bot', 'COICompassは、特定の国の状況に関する情報を提供するツールです。');
+  addMessageToChat('bot', 'COI COMPASSは、難民申請をサポートする弁護士の方向けに開発しました。適切なCOI情報を迅速に探せるよう工夫をしています。ぜひ使ってみて、利用者アンケートでフィードバックをお願いします。');
 }
 
 function showHowToUse() {
-  addMessageToChat('bot', 'COICompassの使い方：1. 国を選択 2. トピックを選択 3. 質問を入力');
+  addMessageToChat('bot', 'COICompassの使い方：1.すぐに利用できるよう、登録、ログイン機能はありません。2024年10月5日時点で、日本で難民申請者が多い５カ国の情報を主に収集し情報提供しています。その他の国は順次、増やしていきます。まずは調べたい国か、情報（COIの考え方、面談の前に）を選んでください 2.国や情報のボタンを押すと、事前に情報をまとめたファイルを閲覧、保存できます。3.国や情報のボタンを押すと、最下段に入力欄が現れます。これは、COI情報に特化したチャットボットです。公正で裏付けが確かな情報を基に回答しますので、ぜひ質問してください。（例　Uganda　宗教　迫害、などと入力すると、ウガンダの法律は同性愛を犯罪として扱い、一部の宗教団体はLGBTに対する否定的な見解を強調している等の情報が得られます。文章ではなく単語で入力してください）4.最後に利用者のアンケートの記入をお願いします。みなさんの声を受けてよりアプリへと改善していきます。');
 }
 
 function showNotification(message) {
